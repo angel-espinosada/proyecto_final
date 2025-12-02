@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     escenario->setSceneRect(0,0,570,410);
     ui->graphicsView->setScene(escenario);
     QGraphicsRectItem *cuadrado = new QGraphicsRectItem(150, 100, 10, 100);
-    QGraphicsRectItem *cuadrado1 = new QGraphicsRectItem(-150, 100, 10, 100);
+    QGraphicsRectItem *cuadrado1 = new QGraphicsRectItem(200, 100, 10, 100);
     cuadrado->setBrush(Qt::red);
     cuadrado1->setBrush(Qt::green);
     escenario->addItem(cuadrado);
