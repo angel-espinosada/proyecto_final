@@ -13,13 +13,17 @@ SOURCES += \
     juego.cpp \
     jugador.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    tubo_caliente.cpp \
+    tubo_frio.cpp
 
 HEADERS += \
     enemigo.h \
     juego.h \
     jugador.h \
-    mainwindow.h
+    mainwindow.h \
+    tubo_caliente.h \
+    tubo_frio.h
 
 FORMS += \
     mainwindow.ui

@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
    QGraphicsScene *escenario = new QGraphicsScene(this);
-    escenario->setSceneRect(0,0,570,410);
+    escenario->setSceneRect(0,0,600,400);
     ui->graphicsView->setScene(escenario);
     QGraphicsRectItem *cuadrado = new QGraphicsRectItem(150, 100, 10, 100);
     QGraphicsRectItem *cuadrado1 = new QGraphicsRectItem(200, 100, 10, 100);
