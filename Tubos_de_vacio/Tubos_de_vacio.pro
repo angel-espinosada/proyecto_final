@@ -15,6 +15,7 @@ SOURCES += \
     jugador.cpp \
     main.cpp \
     mainwindow.cpp \
+    nivel.cpp \
     nivel_1.cpp \
     tubo.cpp \
     tubo_caliente.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     juego.h \
     jugador.h \
     mainwindow.h \
+    nivel.h \
     nivel_1.h \
     tubo.h \
     tubo_caliente.h \
