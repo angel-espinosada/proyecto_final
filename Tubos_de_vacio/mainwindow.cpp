@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QGraphicsRectItem>
+#include "tubo_caliente.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
     cuadrado1->setBrush(Qt::green);
     escenario->addItem(cuadrado);
     escenario->addItem(cuadrado1);
+    //int x=ui->le_X->text().toInt();
+    //int y=ui->le_Y->text().toInt();
+    mituboCaliente= new Tubo_caliente(120,120,50,50);
+    escenario->addItem(mituboCaliente);
 }
 
 MainWindow::~MainWindow()

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>imagenes/Tubo caliente.PNG</file>
+        <file>imagenes/Tubo vacio frio.PNG</file>
+    </qresource>
+</RCC>
