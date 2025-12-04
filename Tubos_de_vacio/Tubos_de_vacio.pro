@@ -10,10 +10,13 @@ CONFIG += c++17
 
 SOURCES += \
     enemigo.cpp \
+    imagenes/imagenes.cpp \
     juego.cpp \
     jugador.cpp \
     main.cpp \
     mainwindow.cpp \
+    nivel_1.cpp \
+    tubo.cpp \
     tubo_caliente.cpp \
     tubo_frio.cpp
 
@@ -22,6 +25,8 @@ HEADERS += \
     juego.h \
     jugador.h \
     mainwindow.h \
+    nivel_1.h \
+    tubo.h \
     tubo_caliente.h \
     tubo_frio.h
 
