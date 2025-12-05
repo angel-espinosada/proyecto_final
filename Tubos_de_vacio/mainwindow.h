@@ -3,6 +3,7 @@
 #include <QGraphicsScene>
 #include <QMainWindow>
 #include "tubo_caliente.h"
+#include "tubo_frio.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -21,6 +22,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Tubo_caliente *mituboCaliente;
+    Tubo_Frio *mitubofrio;
     QGraphicsScene *escenario;
 };
 #endif // MAINWINDOW_H

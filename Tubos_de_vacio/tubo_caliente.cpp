@@ -25,7 +25,7 @@ void Tubo_caliente::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 }
 void Tubo_caliente::actualizar()
 {
-    // Tu código
+    Tubo::actualizar();
 }
 
 void Tubo_caliente::subirTemperatura()
@@ -37,12 +37,12 @@ void Tubo_caliente::subirTemperatura()
 
 bool Tubo_caliente::estadoTemperatura()
 {
-    return false;
+    return temperatura >= 50;;
 }
 
-bool Tubo_caliente::estaExplotado() const
-{   if(temperatura>=100){
+bool Tubo_caliente::estaExplotado() const{
 
-    return false;
-}
+
+    return explotado;
+
 }

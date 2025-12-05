@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QGraphicsRectItem>
 #include "tubo_caliente.h"
+#include "tubo_frio.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     escenario->addItem(cuadrado1);*/
     mituboCaliente= new Tubo_caliente(120,120,50,150);
     escenario->addItem(mituboCaliente);
+    mitubofrio=new Tubo_Frio(140,140,50,150);
+    escenario->addItem(mitubofrio);
 }
 
 MainWindow::~MainWindow()
