@@ -30,7 +30,9 @@ void Tubo_caliente::actualizar()
 
 void Tubo_caliente::subirTemperatura()
 {
-    // Tu código
+
+    if (temperatura +10<= temperaturaMax)
+        temperatura += 10;
 }
 
 bool Tubo_caliente::estadoTemperatura()
@@ -39,6 +41,8 @@ bool Tubo_caliente::estadoTemperatura()
 }
 
 bool Tubo_caliente::estaExplotado() const
-{
+{   if(temperatura>=100){
+
     return false;
+}
 }

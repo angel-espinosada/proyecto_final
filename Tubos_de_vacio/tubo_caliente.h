@@ -9,6 +9,7 @@ class Tubo_caliente :public Tubo
 {
 private:
     int ancho, alto;
+
 public:
    Tubo_caliente(int x, int y, int w, int h);
 
