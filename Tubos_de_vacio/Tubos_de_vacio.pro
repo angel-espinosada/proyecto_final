@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     enemigo.cpp \
+    escenario_juego.cpp \
     imagenes/imagenes.cpp \
     juego.cpp \
     jugador.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     enemigo.h \
+    escenario_juego.h \
     juego.h \
     jugador.h \
     mainwindow.h \
