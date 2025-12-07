@@ -12,13 +12,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
    QGraphicsScene *escenario = new QGraphicsScene(this);
-    escenario->setSceneRect(0,0,1000,600);
+    escenario->setSceneRect(0,0,800,600);
     ui->graphicsView->setScene(escenario);
     nivel_1 *nivel1 = new nivel_1(escenario);
 
     nivel1->cargarEscenario();
     nivel1->cargarSuelo();
     nivel1->cargarTubos();
+    nivel1->cargarJugador();
 
     /*QGraphicsRectItem *cuadrado = new QGraphicsRectItem(150, 100, 10, 100);
     QGraphicsRectItem *cuadrado1 = new QGraphicsRectItem(200, 100, 10, 100);
