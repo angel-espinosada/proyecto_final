@@ -18,3 +18,13 @@ void Escenario_juego::paint(QPainter *painter,
     painter->setBrush(color);
     painter->drawRect(0, 0, w, h);
 }
+
+QGraphicsRectItem *Escenario_juego::crearSuelo(int x, int y, int ancho, int alto)
+{
+    QGraphicsRectItem *suelo = new QGraphicsRectItem(x, y, ancho, alto);
+    suelo->setBrush(QColor(139, 69, 19));   // café
+    suelo->setPen(QPen(Qt::black, 2));
+    return suelo;
+}
+
+

@@ -17,6 +17,7 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
+    QGraphicsRectItem* crearSuelo(int x, int y, int ancho, int alto);
 };
 
 
