@@ -19,6 +19,8 @@ public:
                QWidget *widget = nullptr) override;
     QGraphicsRectItem* crearSuelo(int x, int y, int ancho, int alto);
     QGraphicsRectItem* crearTecho(int x, int y, int ancho, int alto);
+    QGraphicsPixmapItem* crearFondo(const QString &rutaImagen, int x, int y, int w, int h);
+
 };
 
 

@@ -28,3 +28,10 @@ bool Tubo::estaExplotado() const
 {
     return explotado;
 }
+
+QPainterPath Tubo::shape() const
+{
+    QPainterPath path;
+    path.addRect(boundingRect());
+    return path;
+}

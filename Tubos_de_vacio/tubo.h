@@ -16,5 +16,6 @@ public:
     void actualizar();
     void bajarTemperatura(int cantidad);
     bool estaExplotado() const;
+    QPainterPath shape() const override;
 };
 #endif // TUBO_H

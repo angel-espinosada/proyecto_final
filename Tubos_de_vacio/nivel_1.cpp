@@ -16,24 +16,49 @@ void nivel_1::cargarEscenario()
 void nivel_1::cargarvida()
 {
     QPixmap lleno(":/imagenes/vida.png");
+    QPixmap vidaEscalada = lleno.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-    cor1 = new QGraphicsPixmapItem(lleno);
-    cor2 = new QGraphicsPixmapItem(lleno);
-    cor3 = new QGraphicsPixmapItem(lleno);
+    // Escalar la imagen
+    cor1 = new QGraphicsPixmapItem(vidaEscalada);
+    cor2 = new QGraphicsPixmapItem(vidaEscalada);
+    cor3 = new QGraphicsPixmapItem(vidaEscalada);
 
-    cor1->setPos(10, 10);
-    cor2->setPos(50, 10);
-    cor3->setPos(90, 10);
+    // Z-order (adelante)
+    cor1->setZValue(100);
+    cor2->setZValue(100);
+    cor3->setZValue(100);
 
+    // Posiciones (derecha arriba)
+    int ancho_escena = 800;
+    int tamaño = 30;
+
+    cor1->setPos(ancho_escena - tamaño - 10, 55);
+    cor2->setPos(ancho_escena - tamaño * 2 - 20, 55);
+    cor3->setPos(ancho_escena - tamaño * 3 - 30, 55);
+
+    // Agregar
     escena->addItem(cor1);
     escena->addItem(cor2);
     escena->addItem(cor3);
+
 }
+
 
 void nivel_1::cargarSuelo()
 {
     QGraphicsRectItem *suelo = escenario->crearSuelo(0, 550, 800, 50);
     escena->addItem(suelo);
+}
+
+void nivel_1::cargarFondo()
+{
+    QGraphicsPixmapItem *fondo = escenario->crearFondo(
+        ":/imagenes/fondo_nivel1.png",
+        0, 0,
+        800, 600
+        );
+
+    escena->addItem(fondo);
 }
 
 void nivel_1::cargarTubos()
@@ -55,14 +80,38 @@ void nivel_1::cargarTecho()
     escena->addItem(techo);
 }
 
+void nivel_1::verificarCollicion()
+{
+    if (!jugador) return;
+
+    QList<QGraphicsItem*> items = jugador->collidingItems();
+    for (QGraphicsItem* item : items)
+    {
+        if (dynamic_cast<Tubo_caliente*>(item))
+        {
+            qDebug() << "🔥 Colisión con tubo CALIENTE!";
+            // Aplicar daño, quitar vida, etc.
+        }
+        else if (dynamic_cast<Tubo_Frio*>(item))
+        {
+            qDebug() << "❄️ Colisión con tubo FRÍO!";
+        }
+    }
+}
+
 void nivel_1::cargarJugador(Juego *juego)
 {
-    Jugador *jug = new Jugador();
+    jugador= new Jugador();
 
     // y = 550 piso - 75 (alto jugador) = 475
-    jug->setPos(100, 475);
+    jugador->setPos(100, 475);
 
-    escena->addItem(jug);
+    escena->addItem(jugador);
+
+    QGraphicsRectItem *test = new QGraphicsRectItem(300, 475, 50, 75);
+    test->setBrush(Qt::red);
+    test->setZValue(200);  // para que quede encima si es necesario
+    escena->addItem(test);
 }
 
 void nivel_1::actualizarVidas(int vidas)

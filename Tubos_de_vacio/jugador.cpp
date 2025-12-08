@@ -2,6 +2,9 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <QDebug>
+#include "tubo_caliente.h"
+#include "tubo_frio.h"
 
 void Jugador::moverIzquierda()
 {
@@ -55,6 +58,19 @@ void Jugador::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->drawPolygon(triangulo);
 }
 
+QPainterPath Jugador::shape() const
+{
+    QPainterPath path;
+
+    QPolygonF triangulo;
+    triangulo << QPointF(ancho / 2, 0)
+              << QPointF(0, alto)
+              << QPointF(ancho, alto);
+
+    path.addPolygon(triangulo);
+    return path;
+}
+
 void Jugador::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_A)
@@ -64,4 +80,5 @@ void Jugador::keyPressEvent(QKeyEvent *event)
         moverDerecha();
 
     chequearLimites();
+
 }

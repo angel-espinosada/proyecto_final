@@ -4,6 +4,7 @@
 #include "QGraphicsItem"
 #include "QPainter"
 #include <QPixmap>
+#include <QDebug>
 
 class Tubo_caliente :public Tubo
 {
@@ -18,8 +19,11 @@ public:
     bool estadoTemperatura();
     bool estaExplotado() const;
     QRectF boundingRect() const override;
+    QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
+
+
 
 };
 #endif // TUBO_CALIENTE_H
