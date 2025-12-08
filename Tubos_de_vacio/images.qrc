@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>imagenes/Tubo caliente.PNG</file>
         <file>imagenes/Tubo vacio frio.PNG</file>
+        <file>imagenes/vida.png</file>
+        <file>imagenes/vida_perdida.png</file>
     </qresource>
 </RCC>

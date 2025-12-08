@@ -13,6 +13,23 @@ void nivel_1::cargarEscenario()
     escena->addItem(escenario);
 }
 
+void nivel_1::cargarvida()
+{
+    QPixmap lleno(":/imagenes/vida.png");
+
+    cor1 = new QGraphicsPixmapItem(lleno);
+    cor2 = new QGraphicsPixmapItem(lleno);
+    cor3 = new QGraphicsPixmapItem(lleno);
+
+    cor1->setPos(10, 10);
+    cor2->setPos(50, 10);
+    cor3->setPos(90, 10);
+
+    escena->addItem(cor1);
+    escena->addItem(cor2);
+    escena->addItem(cor3);
+}
+
 void nivel_1::cargarSuelo()
 {
     QGraphicsRectItem *suelo = escenario->crearSuelo(0, 550, 800, 50);
@@ -32,7 +49,13 @@ void nivel_1::cargarTubos()
     escena->addItem(t2);
 }
 
-void nivel_1::cargarJugador()
+void nivel_1::cargarTecho()
+{
+    QGraphicsRectItem *techo = escenario->crearTecho(0, 0, 800, 50);
+    escena->addItem(techo);
+}
+
+void nivel_1::cargarJugador(Juego *juego)
 {
     Jugador *jug = new Jugador();
 
@@ -40,4 +63,19 @@ void nivel_1::cargarJugador()
     jug->setPos(100, 475);
 
     escena->addItem(jug);
+}
+
+void nivel_1::actualizarVidas(int vidas)
+{
+    QPixmap lleno(":/imagenes/vida.png");
+    QPixmap vacio(":/imagenes/vida_perdida.png");
+
+    cor1->setPixmap(vidas >= 1 ? lleno : vacio);
+    cor2->setPixmap(vidas >= 2 ? lleno : vacio);
+    cor3->setPixmap(vidas >= 3 ? lleno : vacio);
+}
+
+void nivel_1::setJuego(Juego *juego)
+{
+juego->setNivel(this);
 }

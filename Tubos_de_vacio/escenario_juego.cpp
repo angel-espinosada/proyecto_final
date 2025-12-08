@@ -27,4 +27,12 @@ QGraphicsRectItem *Escenario_juego::crearSuelo(int x, int y, int ancho, int alto
     return suelo;
 }
 
+QGraphicsRectItem *Escenario_juego::crearTecho(int x, int y, int ancho, int alto)
+{
+    QGraphicsRectItem *suelo = new QGraphicsRectItem(x, y, ancho, alto);
+    suelo->setBrush(QColor(13, 69, 19));   // café
+    suelo->setPen(QPen(Qt::black, 2));
+    return suelo;
+}
+
 
