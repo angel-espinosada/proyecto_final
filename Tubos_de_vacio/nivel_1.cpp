@@ -1,6 +1,7 @@
 #include "nivel_1.h"
 #include <QMessageBox>
-
+#include <QGraphicsRectItem>
+#include <QGraphicsTextItem>
 
 nivel_1::nivel_1(QGraphicsScene *escena)
 {
@@ -82,6 +83,31 @@ void nivel_1::cargarTecho()
 
 void nivel_1::verificarCollicion()
 {
+
+    if (mostrarInstruccionesInicio) {
+        if (textoInstrucciones == nullptr) {
+            // Crear el texto la primera vez
+            textoInstrucciones = new QGraphicsTextItem(
+                "Usa A / D para moverte\n"
+                "Presiona R en la esquina para recargar\n"
+                " Presiona E junto al tubo para enfriarlo"
+                );
+            textoInstrucciones->setDefaultTextColor(Qt::white);
+            textoInstrucciones->setPos(200, 80);
+            textoInstrucciones->setZValue(1000);
+            escena->addItem(textoInstrucciones);
+        }
+
+        framesInstrucciones++;
+        // 360 frames ≈ 6 segundos (si tu juego corre a 60 FPS)
+        if (framesInstrucciones > 360) {
+            escena->removeItem(textoInstrucciones);
+            delete textoInstrucciones;
+            textoInstrucciones = nullptr;
+            mostrarInstruccionesInicio = false; // no volver a mostrar
+        }
+    }
+
     if (jugador) {
         for (QGraphicsItem* item : jugador->collidingItems()) {
             if (dynamic_cast<Tubo_caliente*>(item)) {
@@ -100,15 +126,20 @@ void nivel_1::verificarCollicion()
         if (!this->juego->haPerdido()) {
             tuboCaliente->reiniciarTemperatura(80);
             qDebug() << "Tubo reiniciado. Vidas restantes:" << this->juego->getVidas();
-        } else {
+        }
+
+        else {
              QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!\nInténtalo de nuevo.");
             qDebug() << "Juego terminado! No se reinicia el tubo."; }
     }
+    if (tuboCaliente && tuboCaliente->getTemperatura() <= 50) {
+        QMessageBox::information(nullptr, "¡Victoria!", "¡Enfriaste el tubo completamente!\n¡Nivel 1 completado!");
 }
-
+}
 void nivel_1::cargarJugador(Juego *juego)
 {
     jugador= new Jugador();
+    jugador->setNivel(this);
 
     // y = 550 piso - 75 (alto jugador) = 475
     jugador->setPos(100, 475);
@@ -140,3 +171,43 @@ void nivel_1::setJuego(Juego *j)
     this->juego = j; //guardar en la variable miembro
     j->setNivel(this);
 }
+
+void nivel_1::enfriarTubo()
+{
+    if (!jugador || !tuboCaliente)
+        return;
+
+    // 1. Revisar si el jugador tiene carga
+    if (!jugador->tieneCarga()) {
+        qDebug() << "No hay carga para enfriar. Presione R para recargar.";
+        return;
+    }
+
+    // 2. Verificar si está tocando el tubo caliente
+    QList<QGraphicsItem*> items = jugador->collidingItems();
+    bool tocando = false;
+
+    for (QGraphicsItem* item : items) {
+        if (item == tuboCaliente) {
+            tocando = true;
+            break;
+        }
+    }
+
+    if (!tocando) {
+        qDebug() << " No está tocando el tubo. No se puede enfriar.";
+        return;
+    }
+
+    // 3. Enfriar 10 grados
+    tuboCaliente->enfriar(25);
+    qDebug() << "❄ Enfriado → Temperatura:" << tuboCaliente->getTemperatura();
+
+    // 4. Gastar la carga
+    jugador->usarCarga();
+    qDebug() << "Carga usada. Ahora está en 0.";
+
+    // 5. Retroceso forzado del jugador
+    jugador->setX(jugador->x() - 40);
+}
+

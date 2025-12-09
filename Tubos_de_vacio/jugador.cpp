@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "tubo_caliente.h"
 #include "tubo_frio.h"
+#include "nivel_1.h"
 
 void Jugador::moverIzquierda()
 {
@@ -81,4 +82,18 @@ void Jugador::keyPressEvent(QKeyEvent *event)
 
     chequearLimites();
 
+    if (event->key() == Qt::Key_R) {
+        carga = 25;
+        qDebug() << "Recargado: carga = 10";
+    }
+
+    if (event->key() == Qt::Key_E)
+    {
+
+        qDebug() << "Presionaste E!";
+        if (nivel)
+            nivel->enfriarTubo();
+        else
+            qDebug() << "Nivel es nullptr!";
+    }
 }

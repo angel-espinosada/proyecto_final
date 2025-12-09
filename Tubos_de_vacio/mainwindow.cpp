@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     nivel1->cargarTecho();
     nivel1->cargarJugador(juego);
     nivel1->setJuego(juego);
+
     nivel1->cargarvida();
     nivel1->cargarFondo();
 

@@ -74,6 +74,15 @@ void Tubo_caliente::reiniciarTemperatura(int temp)
     qDebug() << "Tubo reiniciado a:" << temperatura << "°C";
 }
 
+void Tubo_caliente::enfriar(int cantidad)
+{
+    temperatura -= cantidad;
+    if (temperatura < 0) {
+        temperatura = 0;
+    }
+    qDebug() << "❄️ Tubo enfriado a:" << temperatura << "°C";
+}
+
 bool Tubo_caliente::estaExplotado() const{
 
 

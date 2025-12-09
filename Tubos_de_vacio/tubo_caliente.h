@@ -21,6 +21,7 @@ public:
     void subirTemperatura();    // aumenta calor
     bool estadoTemperatura();
     void reiniciarTemperatura(int temp);
+    void enfriar(int cantidad);
     bool estaExplotado() const;
     QRectF boundingRect() const override;
     QPainterPath shape() const override;

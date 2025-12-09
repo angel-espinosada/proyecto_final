@@ -18,6 +18,11 @@ class nivel_1
     QGraphicsPixmapItem *cor3;
     Tubo_caliente *tuboCaliente = nullptr;
     Juego *juego = nullptr;
+    //Para Mostrar los mensajes de instrucciones
+    QGraphicsTextItem *textoInstrucciones = nullptr;
+    int framesInstrucciones = 0;
+    bool mostrarInstruccionesInicio = true;
+
 
 
 public:
@@ -34,6 +39,8 @@ void cargarJugador(Juego *juego);
 void actualizarVidas(int vidas);
 void setJuego(Juego *juego);
 void reiniciarTemperatura(int temp);
+void enfriarTubo();
+
 };
 
 #endif // NIVEL_1_H
