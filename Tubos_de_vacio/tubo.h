@@ -2,7 +2,7 @@
 #define TUBO_H
 #include <QGraphicsPixmapItem>
 
-class Tubo: public QGraphicsPixmapItem
+class Tubo: public QGraphicsObject
 {
     int x,y,w,h;
 protected:

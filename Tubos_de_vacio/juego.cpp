@@ -3,9 +3,14 @@
 
 Juego::Juego()
 {
+
     vidas = 3;
     progreso = 0;
     progreso_necesario = 100;
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &Juego::actualizar);
+    timer->start(16); // 60 veces por segundo
 }
 
 void Juego::restarVida()
@@ -34,4 +39,12 @@ int Juego::getProgreso() const { return progreso; }
 void Juego::setNivel(nivel_1 *nivel)
 {
  this->nivelActual = nivel;
+}
+
+void Juego::actualizar()
+{
+    if (nivelActual && nivelActual->jugador) {  // ✅
+        nivelActual->verificarCollicion();
+    }
+
 }

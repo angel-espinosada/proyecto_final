@@ -1,16 +1,22 @@
 #include "tubo_caliente.h"
 #include <QPixmap>
 #include <QDebug>
+#include <QTimer>
 
 
 Tubo_caliente::Tubo_caliente(int x, int y, int w, int h)
-    : Tubo(x, y, w, h, 10, 100)  // temp inicial = 10, tempMax = 100
+    : Tubo(x, y, w, h, 80, 100)  // temp inicial = 80, tempMax = 100
 {
     ancho = w;
     alto = h;
-    setPos(x, y);  // ← Posicionar el item en la escena
+    setPos(x, y);  // Posicionar el item en la escena
 
     qDebug() << "Tubo caliente creado en:" << x << y << "Tamaño:" << w << "x" << h;
+    timerCalentamiento = new QTimer(this);
+    connect(timerCalentamiento, &QTimer::timeout, this, &Tubo_caliente::subirTemperatura);
+    timerCalentamiento->start(1000); // cada 1000 ms = 1 segundo
+
+    qDebug() << "Tubo creado | Temp:" << temperatura;
 }
 
 QRectF Tubo_caliente::boundingRect() const
@@ -33,11 +39,11 @@ void Tubo_caliente::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     QPixmap pixmap(":/imagenes/Tubo caliente.PNG");
     painter->drawPixmap(boundingRect(), pixmap, pixmap.rect());
 
-    // ✅ Dibujar el boundingRect para depurar
+    // Dibujar el boundingRect para depurar
     painter->setPen(QPen(Qt::red, 2));
     painter->drawRect(boundingRect());
 
-    // ✅ Dibujar el shape (opcional)
+    // Dibujar el shape
     painter->setPen(QPen(Qt::green, 1));
     painter->drawPath(shape());
 }
@@ -51,13 +57,21 @@ void Tubo_caliente::actualizar()
 void Tubo_caliente::subirTemperatura()
 {
 
-    if (temperatura +10<= temperaturaMax)
-        temperatura += 10;
+    if (temperatura < temperaturaMax){
+        temperatura ++;
+    qDebug() << "Tubo caliente: temperatura =" << temperatura;
+}
 }
 
 bool Tubo_caliente::estadoTemperatura()
 {
-    return temperatura >= 50;;
+    return temperatura >= 50;
+}
+
+void Tubo_caliente::reiniciarTemperatura(int temp)
+{
+    temperatura = temp;
+    qDebug() << "Tubo reiniciado a:" << temperatura << "°C";
 }
 
 bool Tubo_caliente::estaExplotado() const{

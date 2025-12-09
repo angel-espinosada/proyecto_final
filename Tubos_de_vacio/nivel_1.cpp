@@ -1,5 +1,5 @@
 #include "nivel_1.h"
-
+#include <QMessageBox>
 
 
 nivel_1::nivel_1(QGraphicsScene *escena)
@@ -67,11 +67,11 @@ void nivel_1::cargarTubos()
     int alturaSuelo = 550;
     int altoTubo = 150;
     int y = alturaSuelo - altoTubo; // 400 → justo sobre el suelo
-    Tubo_caliente *t1 = new Tubo_caliente(730, y, 50, 150);
-    escena->addItem(t1);
+    tuboCaliente = new Tubo_caliente(730, y, 50, 150);
+    escena->addItem(tuboCaliente);
 
-    Tubo_Frio *t2 = new Tubo_Frio(660, y, 50, 150);
-    escena->addItem(t2);
+    //Tubo_Frio *t2 = new Tubo_Frio(660, y, 50, 150);
+    //escena->addItem(t2);
 }
 
 void nivel_1::cargarTecho()
@@ -82,20 +82,27 @@ void nivel_1::cargarTecho()
 
 void nivel_1::verificarCollicion()
 {
-    if (!jugador) return;
+    if (jugador) {
+        for (QGraphicsItem* item : jugador->collidingItems()) {
+            if (dynamic_cast<Tubo_caliente*>(item)) {
+                qDebug() << "Colisión con tubo caliente!";
+                // Aquí enfriaremos después
+            }
+        }
+    }
+    if (tuboCaliente && tuboCaliente->getTemperatura() >= 100) {
+        qDebug() << "Tubo llegó a 100°C! Perdiendo una vida...";
 
-    QList<QGraphicsItem*> items = jugador->collidingItems();
-    for (QGraphicsItem* item : items)
-    {
-        if (dynamic_cast<Tubo_caliente*>(item))
-        {
-            qDebug() << "🔥 Colisión con tubo CALIENTE!";
-            // Aplicar daño, quitar vida, etc.
-        }
-        else if (dynamic_cast<Tubo_Frio*>(item))
-        {
-            qDebug() << "❄️ Colisión con tubo FRÍO!";
-        }
+        // Restar vida
+        this->juego->restarVida();
+        actualizarVidas(this->juego->getVidas());
+
+        if (!this->juego->haPerdido()) {
+            tuboCaliente->reiniciarTemperatura(80);
+            qDebug() << "Tubo reiniciado. Vidas restantes:" << this->juego->getVidas();
+        } else {
+             QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!\nInténtalo de nuevo.");
+            qDebug() << "Juego terminado! No se reinicia el tubo."; }
     }
 }
 
@@ -107,11 +114,11 @@ void nivel_1::cargarJugador(Juego *juego)
     jugador->setPos(100, 475);
 
     escena->addItem(jugador);
-
+/*
     QGraphicsRectItem *test = new QGraphicsRectItem(300, 475, 50, 75);
     test->setBrush(Qt::red);
     test->setZValue(200);  // para que quede encima si es necesario
-    escena->addItem(test);
+    escena->addItem(test);*/
 }
 
 void nivel_1::actualizarVidas(int vidas)
@@ -119,12 +126,17 @@ void nivel_1::actualizarVidas(int vidas)
     QPixmap lleno(":/imagenes/vida.png");
     QPixmap vacio(":/imagenes/vida_perdida.png");
 
-    cor1->setPixmap(vidas >= 1 ? lleno : vacio);
-    cor2->setPixmap(vidas >= 2 ? lleno : vacio);
-    cor3->setPixmap(vidas >= 3 ? lleno : vacio);
+    // Escalar ambas
+    QPixmap llenoEscalado = lleno.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap vacioEscalado = vacio.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    cor1->setPixmap(vidas >= 1 ? llenoEscalado : vacioEscalado);
+    cor2->setPixmap(vidas >= 2 ? llenoEscalado : vacioEscalado);
+    cor3->setPixmap(vidas >= 3 ? llenoEscalado : vacioEscalado);
 }
 
-void nivel_1::setJuego(Juego *juego)
+void nivel_1::setJuego(Juego *j)
 {
-juego->setNivel(this);
+    this->juego = j; //guardar en la variable miembro
+    j->setNivel(this);
 }

@@ -16,11 +16,12 @@ class nivel_1
     QGraphicsPixmapItem *cor1;
     QGraphicsPixmapItem *cor2;
     QGraphicsPixmapItem *cor3;
+    Tubo_caliente *tuboCaliente = nullptr;
+    Juego *juego = nullptr;
 
 
 public:
 nivel_1(QGraphicsScene *escena);
-Jugador* jugador = nullptr;
 void cargarEscenario();
 void cargarvida();
 void cargarSuelo();
@@ -32,6 +33,7 @@ void verificarCollicion();
 void cargarJugador(Juego *juego);
 void actualizarVidas(int vidas);
 void setJuego(Juego *juego);
+void reiniciarTemperatura(int temp);
 };
 
 #endif // NIVEL_1_H
