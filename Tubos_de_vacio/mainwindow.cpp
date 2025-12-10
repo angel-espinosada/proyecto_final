@@ -5,39 +5,61 @@
 #include "tubo_frio.h"
 #include "nivel_1.h"
 #include "juego.h"
+#include "menu.h"
+#include "nivel_1.h"
+#include "nivel_2.h"
+#include "nivel_3.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    Juego *juego = new Juego();
-   QGraphicsScene *escenario = new QGraphicsScene(this);
-    escenario->setSceneRect(0,0,800,600);
-    ui->graphicsView->setScene(escenario);
-    nivel_1 *nivel1 = new nivel_1(escenario);
 
-    nivel1->cargarEscenario();
-    nivel1->cargarSuelo();
-    nivel1->cargarTubos();
-    nivel1->cargarTecho();
-    nivel1->cargarJugador(juego);
-    nivel1->setJuego(juego);
+    // Crear el menú
+    Menu *menu = new Menu();
+    ui->graphicsView->setScene(menu);
 
-    nivel1->cargarvida();
-    nivel1->cargarFondo();
+    // --- Conectar selección de niveles ---
+    connect(menu, &Menu::seleccionarNivel, this, [this](int nivel){
 
-    /*QGraphicsRectItem *cuadrado = new QGraphicsRectItem(150, 100, 10, 100);
-    QGraphicsRectItem *cuadrado1 = new QGraphicsRectItem(200, 100, 10, 100);
-    cuadrado->seaaaaatBrush(Qt::red);
-    cuadrado1->setBrush(Qt::green);
-    escenario->addItem(cuadrado);
-    escenario->addItem(cuadrado1);*/
-    /*
-    mituboCaliente= new Tubo_caliente(120,120,50,150);
-    escenario->addItem(mituboCaliente);
-    mitubofrio=new Tubo_Frio(140,140,50,150);
-    escenario->addItem(mitubofrio);*/
+        // Crear una nueva escena para el nivel
+        QGraphicsScene *escena = new QGraphicsScene(this);
+        escena->setSceneRect(0,0,800,600);
+        ui->graphicsView->setScene(escena);
+
+        Juego *juego = new Juego();
+
+        if (nivel == 1) {
+            nivel_1 *n1 = new nivel_1(escena);
+            n1->cargarEscenario();
+            n1->cargarSuelo();
+            n1->cargarTubos();
+            n1->cargarTecho();
+            n1->cargarJugador(juego);
+            n1->setJuego(juego);
+            n1->cargarvida();
+            n1->cargarFondo();
+        }
+        else if (nivel == 2) {
+            nivel_2 *n2 = new nivel_2(escena);
+
+            n2->cargarEscenario();
+            n2->cargarFondo();
+             qDebug() << "Fondo cargado";
+            n2->cargarSuelo();
+            n2->cargarTubos();
+            n2->cargarObstaculos();
+            n2->cargarJugador(juego);
+            qDebug() << "Jugador cargado";
+
+
+        }
+        else if (nivel == 3) {
+            nivel_3 *n3 = new nivel_3(escena);
+            n3->inicializar();
+        }
+    });
 }
 
 MainWindow::~MainWindow()

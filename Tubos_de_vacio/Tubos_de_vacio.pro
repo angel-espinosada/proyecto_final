@@ -16,8 +16,11 @@ SOURCES += \
     jugador.cpp \
     main.cpp \
     mainwindow.cpp \
+    menu.cpp \
     nivel.cpp \
     nivel_1.cpp \
+    nivel_2.cpp \
+    nivel_3.cpp \
     tubo.cpp \
     tubo_caliente.cpp \
     tubo_frio.cpp
@@ -28,8 +31,11 @@ HEADERS += \
     juego.h \
     jugador.h \
     mainwindow.h \
+    menu.h \
     nivel.h \
     nivel_1.h \
+    nivel_2.h \
+    nivel_3.h \
     tubo.h \
     tubo_caliente.h \
     tubo_frio.h
@@ -44,3 +50,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     images.qrc
+
+DISTFILES += \
+    imagenes/fondo_nivel2.PNG
