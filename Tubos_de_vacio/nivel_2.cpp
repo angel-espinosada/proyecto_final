@@ -50,9 +50,14 @@ void nivel_2::cargarTubos()
 
 void nivel_2::cargarObstaculos()
 {
-     qDebug() << "cargarObstaculos - INICIO";
-    QGraphicsRectItem *caja = new QGraphicsRectItem(300, 500, 60, 50);
-    caja->setBrush(QColor(139,69,19));
+    int x = 300;
+    int yInicio = 300;     // mitad de la pantalla
+    int ySuelo = 550;      // altura del suelo
+    int ancho = 30;
+    int altura = ySuelo - yInicio; // 250
+
+    QGraphicsRectItem *caja = new QGraphicsRectItem(x, yInicio, ancho, altura);
+    caja->setBrush(QColor(139, 69, 19)); // marrón (madera/tierra)
     escena->addItem(caja);
 }
 
@@ -62,7 +67,7 @@ void nivel_2::cargarJugador(Juego *j)
 
     jugador = new Jugador();
 
-    jugador->setModoTopDown(true);  // 🔵 Vista cenital
+    jugador->setModoTopDown(true);  //  Vista cenital
 
     jugador->setPos(200, 400);      // Un punto visible
     escena->addItem(jugador);

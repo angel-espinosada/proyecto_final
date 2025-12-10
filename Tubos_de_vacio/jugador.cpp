@@ -17,20 +17,53 @@ void Jugador::moverDerecha()
      setX(x() + velocidad);
 }
 
-void Jugador::chequearLimites()
+void Jugador::moverArriba()
 {
-    if (!scene()) return;
-
-    int minX = 0;
-    int maxX = scene()->width() - ancho;
-
-    if (x() < minX)
-        setX(minX);
-
-    if (x() > maxX)
-        setX(maxX);
+    setY(y() - velocidad);
 }
 
+void Jugador::moverAbajo()
+{
+    setY(y() + velocidad);
+}
+
+void Jugador::chequearLimites()
+{
+
+    if (!scene()) return;
+
+    // Obtener dimensiones de la escena
+    int anchoEscena = scene()->width();
+    int altoEscena = scene()->height();
+
+    if (modoTopDown) {
+        // Modo top-down: límites en X e Y
+        int minX = 0;
+        int maxX = anchoEscena - 1; // ajusta según el tamaño del robot
+        int minY = 0;
+        int maxY = altoEscena - 1;
+
+        // Ajustar según el boundingRect del robot
+        // Si tu robot mide ~50x50, usa:
+        minX = 25;   // margen izquierdo
+        maxX = anchoEscena - 25;
+        minY = 25;   // margen superior
+        maxY = altoEscena - 25;
+
+        if (x() < minX) setX(minX);
+        if (x() > maxX) setX(maxX);
+        if (y() < minY) setY(minY);
+        if (y() > maxY) setY(maxY);
+    }
+    else {
+        // Modo nivel 1: solo izquierda/derecha
+        int minX = 0;
+        int maxX = anchoEscena - ancho;
+
+        if (x() < minX) setX(minX);
+        if (x() > maxX) setX(maxX);
+}
+}
 Jugador::Jugador() {
 
     velocidad = 8;
@@ -43,16 +76,48 @@ Jugador::Jugador() {
 }
 
 QRectF Jugador::boundingRect() const
-{
+
+{   if (modoTopDown) {return QRectF(-25, -35, 50, 50); // margen extra para seguridad
+    }
+
     return QRectF(0, 0, ancho, alto);
 }
 
 void Jugador::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     if (modoTopDown) {
+        painter->setBrush(Qt::darkGray);
+        painter->setPen(Qt::black);
+        painter->drawEllipse(-15, -15, 30, 30);
+
+        // Torreta (frente del robot)
+        painter->setBrush(Qt::gray);
+        painter->drawRect(-8, -25, 16, 10);
+
+        // Sensores ojos
+        painter->setBrush(Qt::green);
+        painter->drawEllipse(-10, -5, 6, 6);
+        painter->drawEllipse(4, -5, 6, 6);
+
+        // Antena
+        painter->setBrush(Qt::red);
+        painter->drawEllipse(-3, -30, 6, 6);
+
+        // Ruedas
+        painter->setBrush(Qt::black);
+        painter->drawRect(-20, -5, 6, 20);
+        painter->drawRect(14, -5, 6, 20);
+
+        // Panel frontal
+        painter->setBrush(QColor(255, 200, 0));
+        painter->drawRect(-10, 8, 20, 8);
+
+
+        /*
         painter->setBrush(Qt::blue);
         painter->setPen(Qt::NoPen);
         painter->drawEllipse(-15, -15, 60, 60);
+*/
         return;
     }
 
@@ -82,28 +147,25 @@ QPainterPath Jugador::shape() const
 
 void Jugador::keyPressEvent(QKeyEvent *event)
 {
-    // --- MODO TOP DOWN (Nivel 2) ---
+    // (Nivel 2)
     if (modoTopDown)
     {
-        int paso = 10;
-
         if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up)
-            setY(y() - paso);
-
+            moverArriba();
         if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down)
-            setY(y() + paso);
-
+            moverAbajo();
         if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left)
-            setX(x() - paso);
-
+            moverIzquierda();
         if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right)
-            setX(x() + paso);
+            moverDerecha();
+        chequearLimites();
+
         update();
-        return;  // Muy importante
+        return;
 
     }
 
-    // LÓGICA DEL NIVEL 1 (mover izquierda/derecha) ---
+    // Nivel 1 (mover izquierda/derecha) ---
     if (event->key() == Qt::Key_A)
         moverIzquierda();
 

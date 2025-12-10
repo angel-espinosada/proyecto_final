@@ -12,8 +12,10 @@ class Jugador: public QGraphicsItem
     int velocidad;
     void moverIzquierda();
     void moverDerecha();
+    void moverArriba();
+    void moverAbajo();
     void chequearLimites();
-     int carga = 0;
+    int carga = 0;
      nivel_1* nivel = nullptr;
    Tubo_caliente *tuboCerca = nullptr;
      bool modoTopDown = false;
