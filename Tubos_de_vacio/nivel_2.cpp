@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QGraphicsRectItem>
 #include <QObject>
+#include <QMessageBox>
 
 
 nivel_2::nivel_2(QGraphicsScene *escena)
@@ -46,19 +47,23 @@ void nivel_2::cargarTubos()
     tuboFrio = new Tubo_Frio(700, alturaSuelo - altoTubo, 50, 150);
     tuboFrio->setVisible(false);   // empieza oculto
     escena->addItem(tuboFrio);
+
+    tuboSuperiorIzq = new Tubo_caliente(0, 0, 50, 150);
+    escena->addItem(tuboSuperiorIzq);
+
+    tuboSuperiorDer = new Tubo_caliente(750, 0, 50, 150);
+    escena->addItem(tuboSuperiorDer);
 }
+
 
 void nivel_2::cargarObstaculos()
 {
-    int x = 300;
-    int yInicio = 300;     // mitad de la pantalla
-    int ySuelo = 550;      // altura del suelo
-    int ancho = 30;
-    int altura = ySuelo - yInicio; // 250
-
-    QGraphicsRectItem *caja = new QGraphicsRectItem(x, yInicio, ancho, altura);
-    caja->setBrush(QColor(139, 69, 19)); // marrón (madera/tierra)
-    escena->addItem(caja);
+    QGraphicsRectItem* caja1 = escenario->crearObstaculo(300, 300, 30, 250);
+    QGraphicsRectItem* caja2 = escenario->crearObstaculo(500, 200, 40, 350, Qt::darkRed);
+    QGraphicsRectItem* caja3 = escenario->crearObstaculo(100, 300, 30, 250);
+    escena->addItem(caja1);
+    escena->addItem(caja2);
+    escena->addItem(caja3);
 }
 
 void nivel_2::cargarJugador(Juego *j)
@@ -87,3 +92,69 @@ void nivel_2::setJuego(Juego *j)
 {
     this->juego = j;
 }
+
+void nivel_2::cargarvida()
+{
+    escenario->cargarVidas(escena, 3);
+}
+
+void nivel_2::actualizarVidas(int vidas)
+{
+    escenario->actualizarVidas(escena, vidas);
+}
+
+void nivel_2::verificarCollicion()
+{
+    if (mostrarInstruccionesInicio) {
+        if (textoInstrucciones == nullptr) {
+            // Crear el texto la primera vez
+            textoInstrucciones = new QGraphicsTextItem(
+                "Usa A / D para moverte\n"
+                "Presiona R en la esquina para recargar\n"
+                " Presiona E junto al tubo para enfriarlo"
+                );
+            textoInstrucciones->setDefaultTextColor(Qt::white);
+            textoInstrucciones->setPos(200, 80);
+            textoInstrucciones->setZValue(1000);
+            escena->addItem(textoInstrucciones);
+        }
+
+        framesInstrucciones++;
+        // 360 frames ≈ 6 segundos (si tu juego corre a 60 FPS)
+        if (framesInstrucciones > 360) {
+            escena->removeItem(textoInstrucciones);
+            delete textoInstrucciones;
+            textoInstrucciones = nullptr;
+            mostrarInstruccionesInicio = false; // no volver a mostrar
+        }
+    }
+
+    if (jugador) {
+        for (QGraphicsItem* item : jugador->collidingItems()) {
+            if (dynamic_cast<Tubo_caliente*>(item)) {
+                qDebug() << "Colisión con tubo caliente!";
+                // Aquí enfriaremos después
+            }
+        }
+    }
+    if (tuboCaliente && tuboCaliente->getTemperatura() >= 100) {
+        qDebug() << "Tubo llegó a 100°C! Perdiendo una vida...";
+
+        // Restar vida
+        this->juego->restarVida();
+        actualizarVidas(this->juego->getVidas());
+
+        if (!this->juego->haPerdido()) {
+            tuboCaliente->reiniciarTemperatura(80);
+            qDebug() << "Tubo reiniciado. Vidas restantes:" << this->juego->getVidas();
+        }
+
+        else {
+            QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!\nInténtalo de nuevo.");
+            qDebug() << "Juego terminado! No se reinicia el tubo."; }
+    }
+    if (tuboCaliente && tuboCaliente->getTemperatura() <= 50) {
+        QMessageBox::information(nullptr, "¡Victoria!", "¡Enfriaste el tubo completamente!\n¡Nivel 1 completado!");
+    }
+}
+

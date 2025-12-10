@@ -16,31 +16,7 @@ void nivel_1::cargarEscenario()
 
 void nivel_1::cargarvida()
 {
-    QPixmap lleno(":/imagenes/vida.png");
-    QPixmap vidaEscalada = lleno.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    // Escalar la imagen
-    cor1 = new QGraphicsPixmapItem(vidaEscalada);
-    cor2 = new QGraphicsPixmapItem(vidaEscalada);
-    cor3 = new QGraphicsPixmapItem(vidaEscalada);
-
-    // Z-order (adelante)
-    cor1->setZValue(100);
-    cor2->setZValue(100);
-    cor3->setZValue(100);
-
-    // Posiciones (derecha arriba)
-    int ancho_escena = 800;
-    int tamaño = 30;
-
-    cor1->setPos(ancho_escena - tamaño - 10, 55);
-    cor2->setPos(ancho_escena - tamaño * 2 - 20, 55);
-    cor3->setPos(ancho_escena - tamaño * 3 - 30, 55);
-
-    // Agregar
-    escena->addItem(cor1);
-    escena->addItem(cor2);
-    escena->addItem(cor3);
+    escenario->cargarVidas(escena, 3);
 
 }
 
@@ -154,16 +130,7 @@ void nivel_1::cargarJugador(Juego *juego)
 
 void nivel_1::actualizarVidas(int vidas)
 {
-    QPixmap lleno(":/imagenes/vida.png");
-    QPixmap vacio(":/imagenes/vida_perdida.png");
-
-    // Escalar ambas
-    QPixmap llenoEscalado = lleno.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    QPixmap vacioEscalado = vacio.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    cor1->setPixmap(vidas >= 1 ? llenoEscalado : vacioEscalado);
-    cor2->setPixmap(vidas >= 2 ? llenoEscalado : vacioEscalado);
-    cor3->setPixmap(vidas >= 3 ? llenoEscalado : vacioEscalado);
+   escenario->actualizarVidas(escena, vidas);
 }
 
 void nivel_1::setJuego(Juego *j)
