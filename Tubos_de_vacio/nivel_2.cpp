@@ -33,12 +33,7 @@ void nivel_2::cargarFondo()
      qDebug() << " cargarFondo - finnnn";
 }
 
-void nivel_2::cargarSuelo()
-{
-    qDebug() << "cargarSuelo - INICIO";
-    QGraphicsRectItem *suelo = escenario->crearSuelo(0, 550, 800, 50);
-    escena->addItem(suelo);
-}
+
 
 void nivel_2::cargarTubos()
 {
@@ -66,15 +61,13 @@ void nivel_2::cargarJugador(Juego *j)
     juego = j;
 
     jugador = new Jugador();
-    //jugador->setNivel2(this);  // ← luego lo hacemos, hoy no
 
-    jugador->setPos(100, 475);
+    jugador->setModoTopDown(true);  // 🔵 Vista cenital
+
+    jugador->setPos(200, 400);      // Un punto visible
     escena->addItem(jugador);
 
-    // Timer para actualizar el nivel
-    QTimer *timer = new QTimer(this);
-    QObject::connect(timer, &QTimer::timeout, this, &nivel_2::actualizar);
-    timer->start(50);   // 20 FPS
+    qDebug() << "Jugador nivel 2 creado y agregado a la escena.";
 }
 
 void nivel_2::actualizar()

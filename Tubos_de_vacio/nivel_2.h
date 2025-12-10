@@ -27,7 +27,6 @@ public:
 
     void cargarEscenario();
     void cargarFondo();
-    void cargarSuelo();
     void cargarTubos();
     void cargarObstaculos();
     void cargarJugador(Juego *juego);

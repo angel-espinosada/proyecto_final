@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
             n2->cargarEscenario();
             n2->cargarFondo();
              qDebug() << "Fondo cargado";
-            n2->cargarSuelo();
+
             n2->cargarTubos();
             n2->cargarObstaculos();
             n2->cargarJugador(juego);

@@ -16,6 +16,8 @@ class Jugador: public QGraphicsItem
      int carga = 0;
      nivel_1* nivel = nullptr;
    Tubo_caliente *tuboCerca = nullptr;
+     bool modoTopDown = false;
+
 
 
 public:
@@ -32,6 +34,7 @@ public:
     void usarCarga() { if (carga > 0) carga = 0; }
     int getCarga() const { return carga; }
      void setNivel(nivel_1* n) { nivel = n; }
+     void setModoTopDown(bool v) { modoTopDown = v; }
 };
 
 #endif // JUGADOR_H

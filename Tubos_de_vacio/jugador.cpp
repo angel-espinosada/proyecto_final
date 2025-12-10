@@ -49,6 +49,14 @@ QRectF Jugador::boundingRect() const
 
 void Jugador::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if (modoTopDown) {
+        painter->setBrush(Qt::blue);
+        painter->setPen(Qt::NoPen);
+        painter->drawEllipse(-15, -15, 60, 60);
+        return;
+    }
+
+
     painter->setBrush(Qt::blue);
 
     QPolygonF triangulo;
@@ -74,6 +82,28 @@ QPainterPath Jugador::shape() const
 
 void Jugador::keyPressEvent(QKeyEvent *event)
 {
+    // --- MODO TOP DOWN (Nivel 2) ---
+    if (modoTopDown)
+    {
+        int paso = 10;
+
+        if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up)
+            setY(y() - paso);
+
+        if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down)
+            setY(y() + paso);
+
+        if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left)
+            setX(x() - paso);
+
+        if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right)
+            setX(x() + paso);
+        update();
+        return;  // Muy importante
+
+    }
+
+    // LÓGICA DEL NIVEL 1 (mover izquierda/derecha) ---
     if (event->key() == Qt::Key_A)
         moverIzquierda();
 
@@ -82,18 +112,15 @@ void Jugador::keyPressEvent(QKeyEvent *event)
 
     chequearLimites();
 
+    // Recargar
     if (event->key() == Qt::Key_R) {
-        carga = 25;
+        carga = 10;
         qDebug() << "Recargado: carga = 10";
     }
 
-    if (event->key() == Qt::Key_E)
-    {
-
-        qDebug() << "Presionaste E!";
+    // Enfriar
+    if (event->key() == Qt::Key_E) {
         if (nivel)
             nivel->enfriarTubo();
-        else
-            qDebug() << "Nivel es nullptr!";
     }
 }
