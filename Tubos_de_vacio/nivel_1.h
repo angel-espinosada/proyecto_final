@@ -24,7 +24,8 @@ class nivel_1 : public QObject
     QGraphicsTextItem *textoInstrucciones = nullptr;
     int framesInstrucciones = 0;
     bool mostrarInstruccionesInicio = true;
-
+    bool gameOverMostrado = false;
+    bool victoriaMostrada = false;
 
 
 public:

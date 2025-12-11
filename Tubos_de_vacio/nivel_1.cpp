@@ -59,14 +59,13 @@ void nivel_1::cargarTecho()
 
 void nivel_1::verificarCollicion()
 {
-
+    // ----- MOSTRAR INSTRUCCIONES -----
     if (mostrarInstruccionesInicio) {
         if (textoInstrucciones == nullptr) {
-            // Crear el texto la primera vez
             textoInstrucciones = new QGraphicsTextItem(
                 "Usa A / D para moverte\n"
                 "Presiona R en la esquina para recargar\n"
-                " Presiona E junto al tubo para enfriarlo"
+                "Presiona E junto al tubo para enfriarlo"
                 );
             textoInstrucciones->setDefaultTextColor(Qt::white);
             textoInstrucciones->setPos(200, 80);
@@ -75,44 +74,61 @@ void nivel_1::verificarCollicion()
         }
 
         framesInstrucciones++;
-        // 360 frames ≈ 6 segundos (si tu juego corre a 60 FPS)
+
         if (framesInstrucciones > 360) {
             escena->removeItem(textoInstrucciones);
             delete textoInstrucciones;
             textoInstrucciones = nullptr;
-            mostrarInstruccionesInicio = false; // no volver a mostrar
+            mostrarInstruccionesInicio = false;
         }
     }
 
+
+    // ====== GAME OVER SOLO UNA VEZ ======
+    if (tuboCaliente &&
+        tuboCaliente->getTemperatura() >= 100 &&
+        !gameOverMostrado)
+    {
+        gameOverMostrado = true;   // evitar que vuelva a salir
+
+        QMessageBox::critical(
+            nullptr,
+            "Game Over",
+            "¡Has perdido todas tus vidas!\nInténtalo de nuevo."
+            );
+
+        return;   // ya no seguir evaluando victoria
+    }
+
+
+    // ====== VICTORIA SOLO UNA VEZ ======
+    if (tuboCaliente &&
+        tuboCaliente->getTemperatura() <= 50 &&
+        !victoriaMostrada)
+    {
+        victoriaMostrada = true;   // evitar múltiples mensajes
+
+        QMessageBox::information(
+            nullptr,
+            "¡Victoria!",
+            "¡Nivel 1 completado!"
+            );
+
+        return;
+    }
+
+
+    // ----- DETECCIÓN DE COLISIÓN -----
     if (jugador) {
-        for (QGraphicsItem* item : jugador->collidingItems()) {
+        for (QGraphicsItem *item : jugador->collidingItems()) {
             if (dynamic_cast<Tubo_caliente*>(item)) {
                 qDebug() << "Colisión con tubo caliente!";
-                // Aquí enfriaremos después
             }
         }
     }
-    if (tuboCaliente && tuboCaliente->getTemperatura() >= 100) {
-        qDebug() << "Tubo llegó a 100°C! Perdiendo una vida...";
-
-        // Restar vida
-        this->juego->restarVida();
-        actualizarVidas(this->juego->getVidas());
-
-        if (!this->juego->haPerdido()) {
-            tuboCaliente->reiniciarTemperatura(80);
-            qDebug() << "Tubo reiniciado. Vidas restantes:" << this->juego->getVidas();
-        }
-
-        else {
-             QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!\nInténtalo de nuevo.");
-            qDebug() << "Juego terminado! No se reinicia el tubo."; }
-        emit gameOver();
-    }
-    if (tuboCaliente && tuboCaliente->getTemperatura() <= 50) {
-                 emit nivelCompletado();
 }
-}
+
+
 void nivel_1::cargarJugador(Juego *juego)
 {
     jugador= new Jugador();
