@@ -46,7 +46,7 @@ void Juego::setNivel(nivel_1 *nivel)
 
 void Juego::actualizar()
 {
-    if (nivelActual && nivelActual->jugador) {  // ✅
+    if (nivelActual && nivelActual->jugador) {
         nivelActual->verificarCollicion();
     }
 

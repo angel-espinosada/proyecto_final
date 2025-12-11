@@ -44,46 +44,66 @@ void nivel_2::cargarFondo()
 void nivel_2::cargarTubos()
 {
 
-        tubos.clear();// Limpiar
+    tubos.clear();
 
-        // Tubo inferior
-        TuboInfo t1;
-        t1.caliente = new Tubo_caliente(700, 400, 50, 150);
-        escena->addItem(t1.caliente);
+    // Tubo inferior (más lento)
+    TuboInfo t1;
+    t1.caliente = new Tubo_caliente(700, 400, 50, 150);
+    t1.frio = new Tubo_Frio(700, 400, 50, 150);
+    t1.frio->setVisible(false);
+    t1.temperatura = 70; // Más bajo
+    escena->addItem(t1.caliente);
+    escena->addItem(t1.frio);
+    tubos.append(t1);
 
-        t1.frio = new Tubo_Frio(700, 400, 50, 150);
-        t1.frio->setVisible(false);
-        escena->addItem(t1.frio);
+    // Tubo superior izquierda (rápido)
+    TuboInfo t2;
+    t2.caliente = new Tubo_caliente(50, 50, 50, 150);
+    t2.frio = new Tubo_Frio(50, 50, 50, 150);
+    t2.frio->setVisible(false);
+    t2.temperatura = 80;
+    escena->addItem(t2.caliente);
+    escena->addItem(t2.frio);
+    tubos.append(t2);
 
-        tubos.append(t1);
+    // Tubo superior derecha (intermedio)
+    TuboInfo t3;
+    t3.caliente = new Tubo_caliente(750, 70, 50, 150);
+    t3.frio = new Tubo_Frio(750, 70, 50, 150);
+    t3.frio->setVisible(false);
+    t3.temperatura = 75;
+    escena->addItem(t3.caliente);
+    escena->addItem(t3.frio);
+    tubos.append(t3);
 
+    // Timer único
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        for (TuboInfo &t : tubos) {
+            if (t.temperatura < 100) {
+                t.temperatura++;
+            }
+            // Verificar explosión INMEDIATA
+            if (t.temperatura >= 100 && !t.cambiado) {
+                qDebug() << "¡Tubo explotó! Perdiendo vida...";
+                juego->restarVida();
+                actualizarVidas(juego->getVidas());
 
-        // Tubo superio Izquierda
-        TuboInfo t2;
-        t2.caliente = new Tubo_caliente(50, 50, 50, 150);
-        escena->addItem(t2.caliente);
+                if (juego->haPerdido()) {
+                    QMessageBox::critical(nullptr, "Game Over", "¡Perdiste!");
+                } else {
+                    // Reiniciar
+                    t.temperatura = 80;
+                    t.cambiado = false;
+                    t.caliente->setVisible(true);
+                    t.frio->setVisible(false);
+                }
+            }
+        }
+    });
+    timer->start(1000);
 
-        t2.frio = new Tubo_Frio(50, 50, 50, 150);
-        t2.frio->setVisible(false);
-        escena->addItem(t2.frio);
-
-        tubos.append(t2);
-
-
-        // Tubo superior derecha
-        TuboInfo t3;
-        t3.caliente = new Tubo_caliente(750, 70, 50, 150);
-        escena->addItem(t3.caliente);
-
-        t3.frio = new Tubo_Frio(750, 70, 50, 150);
-        t3.frio->setVisible(false);
-        escena->addItem(t3.frio);
-
-        tubos.append(t3);
-
-        qDebug() << "Tubos nivel 2 cargados. Total:" << tubos.size();
-    }
-
+}
 
 
 
@@ -112,6 +132,34 @@ void nivel_2::cargarJugador(Juego *j)
     qDebug() << "Jugador nivel 2 creado y agregado a la escena.";
 }
 
+void nivel_2::verificarCollicion()
+{
+    if (!jugador) return;
+
+    for (TuboInfo &t : tubos) {
+        if (t.cambiado) continue; // ya es frío
+
+        if (jugador->collidesWithItem(t.caliente)) {
+            qDebug() << " ¡Tubo reemplazado por frío!";
+            t.caliente->setVisible(false);
+            t.frio->setVisible(true);
+            t.cambiado = true;
+        }
+    }
+
+    // Verificar victoria: ¿todos los tubos son fríos?
+    bool todosCompletados = true;
+    for (const TuboInfo &t : tubos) {
+        if (!t.cambiado) {
+            todosCompletados = false;
+            break;
+        }
+    }
+    if (todosCompletados) {
+        QMessageBox::information(nullptr, "¡Victoria!", "¡Todos los tubos están fríos!");
+    }
+}
+
 void nivel_2::actualizar()
 {
     tiempoRestante--;
@@ -122,40 +170,46 @@ void nivel_2::actualizar()
 
 void nivel_2::verificarCambioTubos()
 {
-
-    int indice = -1;
-
-    if (jugadorTocaTuboCaliente(indice))
-    {
-        qDebug() << "Colisión con tubo caliente #" << indice;
-    }
     if (!jugador) return;
 
-    for (TuboInfo &t : tubos)
-    {
-        if (t.cambiado)
-            continue;   // ya fue reemplazado, saltar
+    for (TuboInfo &t : tubos) {
+        if (t.cambiado) continue;
 
-        // Detectar colisión
-        if (jugador->collidesWithItem(t.caliente))
-        {
-            qDebug() << " Tubo reemplazado!";
+        if (jugador->collidesWithItem(t.caliente)) {
+            // Enfriar el tubo (ajusta la cantidad según quieras)
+            t.temperatura = qMax(0, t.temperatura - 10);
+            qDebug() << "❄️ Enfriado. Nueva temp:" << t.temperatura;
 
-            // Ocultar caliente
-            t.caliente->setVisible(false);
-
-            // Mostrar frío
-            t.frio->setVisible(true);
-
-            // Marcar completado
-            t.cambiado = true;
-
-            // Apagar calentamiento
-            if (t.timer)
-                t.timer->stop();
+            // Verificar victoria (temp ≤ 0)
+            if (t.temperatura <= 0) {
+                t.caliente->setVisible(false);
+                t.frio->setVisible(true);
+                t.cambiado = true;
+                qDebug() << "Tubo" << &t << "completado";
+            }
         }
     }
 }
+void nivel_2::tuboExplotado(TuboInfo &tubo)
+{
+    if (tubo.cambiado) return; // Ya fue resuelto
+
+    qDebug() << "¡Tubo explotó! Perdiendo una vida...";
+    juego->restarVida();
+    actualizarVidas(juego->getVidas());
+
+    if (juego->haPerdido()) {
+        QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!");
+        return;
+    }
+
+    // Reiniciar el tubo
+    tubo.temperatura = 50;
+    tubo.cambiado = false;
+    tubo.frio->setVisible(false);
+    tubo.caliente->setVisible(true);
+}
+
 
 void nivel_2::setJuego(Juego *j)
 {
@@ -172,59 +226,7 @@ void nivel_2::actualizarVidas(int vidas)
     escenario->actualizarVidas(escena, vidas);
 }
 
-void nivel_2::verificarCollicion()
-{
-    if (mostrarInstruccionesInicio) {
-        if (textoInstrucciones == nullptr) {
-            // Crear el texto la primera vez
-            textoInstrucciones = new QGraphicsTextItem(
-                "Usa A / D para moverte\n"
-                "Presiona R en la esquina para recargar\n"
-                " Presiona E junto al tubo para enfriarlo"
-                );
-            textoInstrucciones->setDefaultTextColor(Qt::white);
-            textoInstrucciones->setPos(200, 80);
-            textoInstrucciones->setZValue(1000);
-            escena->addItem(textoInstrucciones);
-        }
 
-        framesInstrucciones++;
-        // 360 frames ≈ 6 segundos (si tu juego corre a 60 FPS)
-        if (framesInstrucciones > 360) {
-            escena->removeItem(textoInstrucciones);
-            delete textoInstrucciones;
-            textoInstrucciones = nullptr;
-            mostrarInstruccionesInicio = false; // no volver a mostrar
-        }
-    }
-
-    if (jugador) {
-        for (TuboInfo &t : tubos) {
-            if (t.caliente && jugador->collidesWithItem(t.caliente)) {
-                qDebug() << "✅ ¡COLISIÓN CON TUBO CALIENTE!";
-            }
-        }
-    }
-    if (tuboCaliente && tuboCaliente->getTemperatura() >= 100) {
-        qDebug() << "Tubo llegó a 100°C! Perdiendo una vida...";
-
-        // Restar vida
-        this->juego->restarVida();
-        actualizarVidas(this->juego->getVidas());
-
-        if (!this->juego->haPerdido()) {
-            tuboCaliente->reiniciarTemperatura(80);
-            qDebug() << "Tubo reiniciado. Vidas restantes:" << this->juego->getVidas();
-        }
-
-        else {
-            QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!\nInténtalo de nuevo.");
-            qDebug() << "Juego terminado! No se reinicia el tubo."; }
-    }
-    if (tuboCaliente && tuboCaliente->getTemperatura() <= 50) {
-        QMessageBox::information(nullptr, "¡Victoria!", "¡Enfriaste el tubo completamente!\n¡Nivel 1 completado!");
-    }
-}
 
 bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
 {
@@ -244,4 +246,5 @@ bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
 
     return false;
 }
+
 

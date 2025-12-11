@@ -53,7 +53,10 @@ MainWindow::MainWindow(QWidget *parent)
             n2->cargarTubos();
             n2->cargarObstaculos();
             n2->cargarJugador(juego);
+            n2->setJuego(juego);
+
             qDebug() << "Jugador cargado";
+
 
 
 

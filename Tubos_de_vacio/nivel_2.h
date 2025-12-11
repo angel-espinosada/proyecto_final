@@ -12,9 +12,12 @@
 struct TuboInfo {
     Tubo_caliente* caliente = nullptr;
     Tubo_Frio*     frio     = nullptr;
-    QTimer* timer;
     bool cambiado = false;
-    int temperatura = 50;   // temperatura inicial
+    int temperatura = 50;      //
+    int temperaturaMax = 100;  //
+    QTimer *timerCalentamiento = nullptr; // para calentar solo este tubo
+    int posX = 0;
+    int posY = 0;
 
 };
 
@@ -67,6 +70,7 @@ public:
 public slots:
     void actualizar();
     void verificarCambioTubos();
+   void tuboExplotado(TuboInfo &tubo);
 
 };
 
