@@ -19,8 +19,8 @@ struct TuboInfo {
     int posX = 0;
     int posY = 0;
 
-};
 
+};
 
 class nivel_2 : public QObject
 {
@@ -52,7 +52,11 @@ private:
     int framesInstrucciones = 0;
     bool mostrarInstruccionesInicio = true;
     QVector<TuboInfo> tubos;
-
+    //Fisica
+    float velocidadX = 0;
+    float velocidadXSalto = 0.0f;
+    bool estaSaltando = false;
+    bool enSalto = false;
 
 public:
     nivel_2(QGraphicsScene *escena);
@@ -67,6 +71,9 @@ public:
     void actualizarVidas(int vidas);
     void verificarCollicion();
     bool jugadorTocaTuboCaliente(int &indiceTubo);
+
+    void actualizarFisica();
+    void saltar();
 public slots:
     void actualizar();
     void verificarCambioTubos();

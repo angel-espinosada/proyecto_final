@@ -3,11 +3,12 @@
 #include <QGraphicsItem>
 #include "tubo_caliente.h"
 #include "tubo_frio.h"
+#include <QObject>
 
 class nivel_1;
-class Jugador: public QGraphicsItem
+class Jugador: public QObject, public QGraphicsItem
 {
-
+ Q_OBJECT
     int ancho, alto;
     int velocidad;
     void moverIzquierda();
@@ -37,6 +38,14 @@ public:
     int getCarga() const { return carga; }
      void setNivel(nivel_1* n) { nivel = n; }
      void setModoTopDown(bool v) { modoTopDown = v; }
+     float velocidadY = 0;
+     float gravedad = 0.8f;
+     float impulsoSalto = -15.0f;
+     bool enElSuelo = true;
+     bool enSalto = false;
+
+ signals:
+     void pedirSalto();
 };
 
 #endif // JUGADOR_H

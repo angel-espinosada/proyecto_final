@@ -150,17 +150,20 @@ void Jugador::keyPressEvent(QKeyEvent *event)
     // (Nivel 2)
     if (modoTopDown)
     {
-        if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up)
-            moverArriba();
-        if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down)
-            moverAbajo();
-        if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left)
-            moverIzquierda();
-        if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right)
-            moverDerecha();
-        chequearLimites();
+        // solo se mueve libre si NO está saltando
+        if (!enSalto)
+        {
+            if (event->key() == Qt::Key_W) moverArriba();
+            if (event->key() == Qt::Key_S) moverAbajo();
+        }
 
-        update();
+        // en cualquier caso se mueve en X
+        if (event->key() == Qt::Key_A) moverIzquierda();
+        if (event->key() == Qt::Key_D) moverDerecha();
+
+        if (event->key() == Qt::Key_Space)
+            emit pedirSalto();
+
         return;
 
     }
