@@ -7,6 +7,7 @@
 #include "tubo_frio.h"
 #include "jugador.h"
 #include "juego.h"
+#include <QObject>
 
 class nivel_1
 {

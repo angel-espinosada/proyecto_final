@@ -1,5 +1,7 @@
 #include "juego.h"
 #include "nivel_1.h"
+#include "nivel_2.h"
+
 
 Juego::Juego()
 {
@@ -38,8 +40,9 @@ int Juego::getProgreso() const { return progreso; }
 
 void Juego::setNivel(nivel_1 *nivel)
 {
- this->nivelActual = nivel;
+    this->nivelActual = nivel;
 }
+
 
 void Juego::actualizar()
 {

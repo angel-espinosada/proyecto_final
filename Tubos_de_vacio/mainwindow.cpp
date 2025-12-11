@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
         Juego *juego = new Juego();
 
         if (nivel == 1) {
-            nivel_1 *n1 = new nivel_1(escena);
+            nivel_1 *n1= new nivel_1(escena);
             n1->cargarEscenario();
             n1->cargarSuelo();
             n1->cargarTubos();
@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
             n1->setJuego(juego);
             n1->cargarvida();
             n1->cargarFondo();
+
+
         }
         else if (nivel == 2) {
             nivel_2 *n2 = new nivel_2(escena);
@@ -52,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
             n2->cargarObstaculos();
             n2->cargarJugador(juego);
             qDebug() << "Jugador cargado";
+
 
 
         }

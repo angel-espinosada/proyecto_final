@@ -7,6 +7,17 @@
 #include "tubo_frio.h"
 #include "escenario_juego.h"
 #include "juego.h"
+#include <QVector>
+
+struct TuboInfo {
+    Tubo_caliente* caliente = nullptr;
+    Tubo_Frio*     frio     = nullptr;
+    QTimer* timer;
+    bool cambiado = false;
+    int temperatura = 50;   // temperatura inicial
+
+};
+
 
 class nivel_2 : public QObject
 {
@@ -37,6 +48,8 @@ private:
     QGraphicsTextItem *textoInstrucciones = nullptr;
     int framesInstrucciones = 0;
     bool mostrarInstruccionesInicio = true;
+    QVector<TuboInfo> tubos;
+
 
 public:
     nivel_2(QGraphicsScene *escena);
@@ -50,8 +63,10 @@ public:
     void cargarvida();
     void actualizarVidas(int vidas);
     void verificarCollicion();
+    bool jugadorTocaTuboCaliente(int &indiceTubo);
 public slots:
     void actualizar();
+    void verificarCambioTubos();
 
 };
 
