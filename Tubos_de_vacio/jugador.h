@@ -43,6 +43,7 @@ public:
      float impulsoSalto = -15.0f;
      bool enElSuelo = true;
      bool enSalto = false;
+     bool saltando = false;
 
  signals:
      void pedirSalto();

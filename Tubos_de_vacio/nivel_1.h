@@ -9,8 +9,9 @@
 #include "juego.h"
 #include <QObject>
 
-class nivel_1
+class nivel_1 : public QObject
 {
+    Q_OBJECT
     private:
     QGraphicsScene *escena;
     Escenario_juego *escenario;
@@ -42,6 +43,9 @@ void setJuego(Juego *juego);
 void reiniciarTemperatura(int temp);
 void enfriarTubo();
 
+signals:
+void nivelCompletado();
+     void gameOver();
 };
 
 #endif // NIVEL_1_H

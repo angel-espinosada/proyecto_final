@@ -22,7 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // --- Conectar selección de niveles ---
     connect(menu, &Menu::seleccionarNivel, this, [this](int nivel){
-
+        if (nivel == 99) {
+            QApplication::quit();
+            return;
+        }
         // Crear una nueva escena para el nivel
         QGraphicsScene *escena = new QGraphicsScene(this);
         escena->setSceneRect(0,0,800,600);
@@ -32,6 +35,14 @@ MainWindow::MainWindow(QWidget *parent)
 
         if (nivel == 1) {
             nivel_1 *n1= new nivel_1(escena);
+            connect(n1, &nivel_1::nivelCompletado, this, [this]() {
+                Menu *menu = new Menu();
+                ui->graphicsView->setScene(menu);
+            });
+            connect(n1, &nivel_1::gameOver, this, [this]() {
+                Menu *menu = new Menu();
+                ui->graphicsView->setScene(menu);
+            });
             n1->cargarEscenario();
             n1->cargarSuelo();
             n1->cargarTubos();

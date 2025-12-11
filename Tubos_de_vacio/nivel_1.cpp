@@ -107,9 +107,10 @@ void nivel_1::verificarCollicion()
         else {
              QMessageBox::critical(nullptr, "Game Over", "¡Has perdido todas tus vidas!\nInténtalo de nuevo.");
             qDebug() << "Juego terminado! No se reinicia el tubo."; }
+        emit gameOver();
     }
     if (tuboCaliente && tuboCaliente->getTemperatura() <= 50) {
-        QMessageBox::information(nullptr, "¡Victoria!", "¡Enfriaste el tubo completamente!\n¡Nivel 1 completado!");
+                 emit nivelCompletado();
 }
 }
 void nivel_1::cargarJugador(Juego *juego)

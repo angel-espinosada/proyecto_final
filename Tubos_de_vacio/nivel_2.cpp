@@ -119,6 +119,8 @@ void nivel_2::cargarObstaculos()
 
 void nivel_2::cargarJugador(Juego *j)
 {
+
+
     //Fisica
     QTimer *timerFisica = new QTimer(this);
     connect(timerFisica, &QTimer::timeout, this, &nivel_2::actualizarFisica);
@@ -255,47 +257,47 @@ bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
 
 void nivel_2::actualizarFisica()
 {
+
+
+
     if (!jugador) return;
 
-    // gravedad
+    // APLICAR GRAVEDAD
     jugador->velocidadY += jugador->gravedad;
 
-    // movimiento vertical
+    // MOVER EN Y
     jugador->setY(jugador->y() + jugador->velocidadY);
 
-    // si está saltando, avanza en X
-    if (estaSaltando) {
+    // SI ESTÁ SALTANDO, AVANZA EN X
+    if (jugador->saltando)
+    {
         jugador->setX(jugador->x() + velocidadXSalto);
     }
 
-    // piso del nivel (ajusta si es otro)
     float piso = 400;
 
-    if (jugador->y() >= piso) {
+    // DETECCIÓN DE PISO
+    if (jugador->y() >= piso)
+    {
         jugador->setY(piso);
         jugador->velocidadY = 0;
         jugador->enElSuelo = true;
-        enSalto = false;
-
-        // terminó el salto
-        estaSaltando = false;
-        velocidadXSalto = 0.0f;
-        jugador->enSalto = false;
+        jugador->saltando = false;
+        velocidadXSalto = 0;
     }
 
 }
 
 
-
-
-
 void nivel_2::saltar()
 {
     if (!jugador) return;
-    if (enSalto) return;  // ya está en el aire
+    if (jugador->saltando) return;  // evitar doble salto
 
-    enSalto = true;
+    jugador->saltando = true;
     jugador->enElSuelo = false;
 
-    jugador->velocidadY = jugador->impulsoSalto;  // hacia arriba
+    jugador->velocidadY = jugador->impulsoSalto; // impulso hacia arriba
+
+    velocidadXSalto = 4; // mover en X durante el salto
 }

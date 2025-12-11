@@ -37,21 +37,9 @@ void Jugador::chequearLimites()
     int altoEscena = scene()->height();
 
     if (modoTopDown) {
-        // Modo top-down: límites en X e Y
-        int minX = 0;
-        int maxX = anchoEscena - 1; // ajusta según el tamaño del robot
-        int minY = 0;
-        int maxY = altoEscena - 1;
+        int minY = -300;
+        int maxY = altoEscena - 25;
 
-        // Ajustar según el boundingRect del robot
-        // Si tu robot mide ~50x50, usa:
-        minX = 25;   // margen izquierdo
-        maxX = anchoEscena - 25;
-        minY = 25;   // margen superior
-        maxY = altoEscena - 25;
-
-        if (x() < minX) setX(minX);
-        if (x() > maxX) setX(maxX);
         if (y() < minY) setY(minY);
         if (y() > maxY) setY(maxY);
     }
@@ -150,14 +138,12 @@ void Jugador::keyPressEvent(QKeyEvent *event)
     // (Nivel 2)
     if (modoTopDown)
     {
-        // solo se mueve libre si NO está saltando
-        if (!enSalto)
+        if (!saltando)
         {
             if (event->key() == Qt::Key_W) moverArriba();
             if (event->key() == Qt::Key_S) moverAbajo();
         }
 
-        // en cualquier caso se mueve en X
         if (event->key() == Qt::Key_A) moverIzquierda();
         if (event->key() == Qt::Key_D) moverDerecha();
 

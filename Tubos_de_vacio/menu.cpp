@@ -38,7 +38,7 @@ Menu::Menu(QObject *parent):QGraphicsScene(parent)
 
     //Titulo
 
-    QGraphicsTextItem *titulo = new QGraphicsTextItem("MENU PRINCIPAL");
+    QGraphicsTextItem *titulo = new QGraphicsTextItem("Tubos de vacio");
     titulo->setDefaultTextColor(Qt::white);
     titulo->setFont(QFont("Arial", 28, QFont::Bold));
     titulo->setPos(200, 50);
@@ -48,5 +48,6 @@ Menu::Menu(QObject *parent):QGraphicsScene(parent)
     crearBoton("Nivel 1", 200, 1);
     crearBoton("Nivel 2", 300, 2);
     crearBoton("Nivel 3", 400, 3);
+    crearBoton("Cerrar", 500, 99);
 }
 
