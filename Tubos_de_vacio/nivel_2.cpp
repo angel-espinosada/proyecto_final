@@ -262,6 +262,17 @@ void nivel_2::actualizarFisica()
 
     if (!jugador) return;
 
+    // Si la física no está activa, no mover nada
+    if (!jugador->activarFisica)
+        return;
+
+    // PASO INICIAL DEL SALTO
+    if (jugador->pasoInicialSalto) {
+        jugador->setY(jugador->y() - 25);  // sube un poquito
+        jugador->setX(jugador->x() + 8);   // avanza para pasar obstáculos
+        jugador->pasoInicialSalto = false;
+    }
+
     // APLICAR GRAVEDAD
     jugador->velocidadY += jugador->gravedad;
 
@@ -269,11 +280,11 @@ void nivel_2::actualizarFisica()
     jugador->setY(jugador->y() + jugador->velocidadY);
 
     // SI ESTÁ SALTANDO, AVANZA EN X
-    if (jugador->saltando)
-    {
-        jugador->setX(jugador->x() + velocidadXSalto);
+    if (jugador->saltando) {
+        jugador->setX(jugador->x() + 4);
     }
 
+    // Piso
     float piso = 400;
 
     // DETECCIÓN DE PISO
@@ -281,23 +292,25 @@ void nivel_2::actualizarFisica()
     {
         jugador->setY(piso);
         jugador->velocidadY = 0;
+
         jugador->enElSuelo = true;
         jugador->saltando = false;
-        velocidadXSalto = 0;
-    }
 
+        // DESACTIVAR FÍSICA
+        jugador->activarFisica = false;
+    }
 }
 
 
 void nivel_2::saltar()
 {
     if (!jugador) return;
-    if (jugador->saltando) return;  // evitar doble salto
+    if (jugador->saltando) return;  // no doble salto
 
     jugador->saltando = true;
     jugador->enElSuelo = false;
 
     jugador->velocidadY = jugador->impulsoSalto; // impulso hacia arriba
 
-    velocidadXSalto = 4; // mover en X durante el salto
+    jugador->activarFisica = true;  // activar física durante el salto
 }

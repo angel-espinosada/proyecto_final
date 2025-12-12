@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Crear el menú
-    Menu *menu = new Menu();
+    menu = new Menu();
     ui->graphicsView->setScene(menu);
 
     // --- Conectar selección de niveles ---
@@ -34,14 +34,17 @@ MainWindow::MainWindow(QWidget *parent)
         Juego *juego = new Juego();
 
         if (nivel == 1) {
-            nivel_1 *n1= new nivel_1(escena);
-            connect(n1, &nivel_1::nivelCompletado, this, [this]() {
-                Menu *menu = new Menu();
+            nivel_1 *n1 = new nivel_1(escena);
+
+            connect(n1, &nivel_1::gameOver, this, [this, escena]() {
                 ui->graphicsView->setScene(menu);
+                ui->graphicsView->resetTransform();
+                escena->deleteLater();
             });
-            connect(n1, &nivel_1::gameOver, this, [this]() {
-                Menu *menu = new Menu();
-                ui->graphicsView->setScene(menu);
+            connect(n1, &nivel_1::nivelCompletado, this, [this, escena]() {
+                ui->graphicsView->setScene(menu);   // primero cambiás la escena
+                ui->graphicsView->resetTransform(); // luego limpiás la vista
+                escena->deleteLater();              // último: destruir escena
             });
             n1->cargarEscenario();
             n1->cargarSuelo();

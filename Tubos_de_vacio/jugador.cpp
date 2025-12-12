@@ -147,9 +147,11 @@ void Jugador::keyPressEvent(QKeyEvent *event)
         if (event->key() == Qt::Key_A) moverIzquierda();
         if (event->key() == Qt::Key_D) moverDerecha();
 
-        if (event->key() == Qt::Key_Space)
-            emit pedirSalto();
-
+        if (event->key() == Qt::Key_Space) {
+            activarFisica = true;       // activar física
+            pasoInicialSalto = true;    // dar pasito al inicio
+            emit pedirSalto();          // saltar
+        }
         return;
 
     }

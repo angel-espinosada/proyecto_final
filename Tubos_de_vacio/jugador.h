@@ -44,6 +44,8 @@ public:
      bool enElSuelo = true;
      bool enSalto = false;
      bool saltando = false;
+     bool activarFisica = false;     // La física solo se aplica cuando saltamos
+     bool pasoInicialSalto = false;  // Primer pasito hacia arriba/adelante
 
  signals:
      void pedirSalto();
