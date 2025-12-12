@@ -20,6 +20,8 @@ class Jugador: public QObject, public QGraphicsItem
      nivel_1* nivel = nullptr;
    Tubo_caliente *tuboCerca = nullptr;
      bool modoTopDown = false;
+   bool llevandoTuboFrio = false;
+   Tubo_Frio* tuboEnEspalda = nullptr;
 
 
 
@@ -46,7 +48,12 @@ public:
      bool saltando = false;
      bool activarFisica = false;     // La física solo se aplica cuando saltamos
      bool pasoInicialSalto = false;  // Primer pasito hacia arriba/adelante
+     bool estaLlevandoTuboFrio() const { return llevandoTuboFrio; }
+     void setLlevandoTuboFrio(bool v) { llevandoTuboFrio = v; }
 
+     Tubo_Frio* getTuboEnEspalda() const { return tuboEnEspalda; }
+     void setTuboEnEspalda(Tubo_Frio* t) { tuboEnEspalda = t; }
+     bool puedeMoverA(QPointF destino);
  signals:
      void pedirSalto();
 };

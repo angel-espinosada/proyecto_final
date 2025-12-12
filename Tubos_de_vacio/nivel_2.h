@@ -78,6 +78,10 @@ public:
     void saltar();
 
     void cargarInventarioFrio();
+    void intentarRecogerTuboFrio();
+    void intentarColocarTuboFrio();
+
+
 public slots:
     void actualizar();
     void verificarCambioTubos();

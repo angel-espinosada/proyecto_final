@@ -11,6 +11,7 @@
 
 
 
+
 void nivel_2::detenerNivel()
 {
     // Detener todos los timers creados dentro del nivel
@@ -279,12 +280,13 @@ bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
 
     return false;
 }
-
+    QPointF ultimaPosicionJugador;
 
     void nivel_2::actualizarFisica()
     {
         if (!jugador) return;
-
+        // Guardar última posición segura antes del movimiento
+        ultimaPosicionJugador = jugador->pos();
         // =======================
         // FÍSICA SOLO SI ESTÁ ACTIVA
         // =======================
@@ -345,16 +347,24 @@ bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
         for (QGraphicsItem* item : colisiones) {
 
             if (dynamic_cast<QGraphicsRectItem*>(item)) {
+                jugador->setPos(ultimaPosicionJugador);
                 qDebug() << "Jugador tocó un OBSTÁCULO";
             }
 
-            for (int i = 0; i < tubos.size(); i++) {
-                if (item == tubos[i].caliente)
-                    qDebug() << "Jugador tocó TUBO CALIENTE #" << (i + 1);
-                if (item == tubos[i].frio)
-                    qDebug() << "Jugador tocó TUBO FRÍO #" << (i + 1);
+            if (dynamic_cast<QGraphicsRectItem*>(item)) {
+                jugador->setPos(ultimaPosicionJugador);
+                jugador->velocidadY = 0;      // detiene avance vertical
+                jugador->saltando = false;    // evita seguir avanzando en X por salto
+                jugador->activarFisica = false; // detiene la física ese frame
+
+                qDebug() << "Jugador BLOQUEADO por un OBSTÁCULO";
+
+                return;   // ⛔ DETIENE TODA LA FUNCIÓN (la clave)
             }
         }
+
+        intentarRecogerTuboFrio();
+        intentarColocarTuboFrio();
     }
 
 void nivel_2::saltar()
@@ -390,4 +400,78 @@ void nivel_2::cargarInventarioFrio()
 
     qDebug() << "Inventario de tubos fríos creado con" << inventarioFrio.size() << "tubos.";
 
+}
+
+void nivel_2::intentarRecogerTuboFrio()
+{
+    if (!jugador || jugador->estaLlevandoTuboFrio())  // ← usa getter
+        return;
+
+    for (int i = 0; i < inventarioFrio.size(); i++)
+    {
+        Tubo_Frio* frio = inventarioFrio[i];
+
+        if (jugador->collidesWithItem(frio))
+        {
+            qDebug() << "Jugador recogió un tubo frío del inventario.";
+
+            // Ocultar de la escena
+            frio->setVisible(false);
+
+            // Asignarlo al jugador
+            jugador->setLlevandoTuboFrio(true);
+            jugador->setTuboEnEspalda(frio);
+
+            // Hacerlo hijo visual del jugador
+            frio->setParentItem(jugador);
+            frio->setPos(-10, -40); // atrás del jugador
+
+            inventarioFrio.removeAt(i);
+
+            break;
+        }
+    }
+}
+
+
+void nivel_2::intentarColocarTuboFrio()
+{
+    if (!jugador || !jugador->estaLlevandoTuboFrio())
+        return;
+
+    for (TuboInfo &t : tubos)
+    {
+        if (!t.cambiado && jugador->collidesWithItem(t.caliente))
+        {
+            qDebug() << "El jugador coloca el tubo frío en el tubo caliente.";
+
+            // Obtener el tubo frío que lleva el jugador
+            Tubo_Frio* frio = jugador->getTuboEnEspalda();
+            if (!frio) return;
+
+            // Quitar tubo caliente
+            t.caliente->setVisible(false);
+
+            // Sacar el frío de la espalda
+            frio->setParentItem(nullptr);
+
+            // Usar posición real del tubo caliente
+            QPointF posCaliente = t.caliente->pos();
+            frio->setPos(posCaliente.x(), posCaliente.y());
+            frio->setVisible(true);
+
+            // Marcar como resuelto
+            t.cambiado = true;
+            t.frio = frio;
+
+            // Detener calentamiento de este tubo
+            t.temperatura = 0;
+
+            // Liberar al jugador
+            jugador->setLlevandoTuboFrio(false);
+            jugador->setTuboEnEspalda(nullptr);
+
+            break;
+        }
+    }
 }
