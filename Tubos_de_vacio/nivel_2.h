@@ -52,12 +52,14 @@ private:
     int framesInstrucciones = 0;
     bool mostrarInstruccionesInicio = true;
     QVector<TuboInfo> tubos;
+    QVector<Tubo_Frio*> inventarioFrio;
     //Fisica
     float velocidadX = 0;
     float velocidadXSalto = 0.0f;
     bool estaSaltando = false;
     bool enSalto = false;
-
+    bool juegoTerminado = false;
+    void detenerNivel();
 public:
     nivel_2(QGraphicsScene *escena);
 
@@ -74,10 +76,15 @@ public:
 
     void actualizarFisica();
     void saltar();
+
+    void cargarInventarioFrio();
 public slots:
     void actualizar();
     void verificarCambioTubos();
    void tuboExplotado(TuboInfo &tubo);
+    signals:
+    void gameOver();
+    void nivelCompletado();
 
 };
 

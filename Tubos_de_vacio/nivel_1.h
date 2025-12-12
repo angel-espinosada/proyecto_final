@@ -43,6 +43,8 @@ void actualizarVidas(int vidas);
 void setJuego(Juego *juego);
 void reiniciarTemperatura(int temp);
 void enfriarTubo();
+bool juegoTerminado = false;
+void detenerNivel();
 
 signals:
 void nivelCompletado();

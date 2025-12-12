@@ -60,21 +60,30 @@ MainWindow::MainWindow(QWidget *parent)
         else if (nivel == 2) {
             nivel_2 *n2 = new nivel_2(escena);
 
+            connect(n2, &nivel_2::gameOver, this, [this, escena]() {
+                ui->graphicsView->setScene(menu);
+                ui->graphicsView->resetTransform();
+                escena->deleteLater();
+            });
+
+            connect(n2, &nivel_2::nivelCompletado, this, [this, escena]() {
+                ui->graphicsView->setScene(menu);
+                ui->graphicsView->resetTransform();
+                escena->deleteLater();
+            });
+
             n2->cargarEscenario();
             n2->cargarFondo();
-             qDebug() << "Fondo cargado";
             n2->cargarvida();
             n2->cargarTubos();
             n2->cargarObstaculos();
             n2->cargarJugador(juego);
             n2->setJuego(juego);
-
-            qDebug() << "Jugador cargado";
-
-
-
-
         }
+
+
+
+
         else if (nivel == 3) {
             nivel_3 *n3 = new nivel_3(escena);
             n3->inicializar();

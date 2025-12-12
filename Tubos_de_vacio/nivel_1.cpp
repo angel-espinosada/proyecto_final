@@ -59,74 +59,58 @@ void nivel_1::cargarTecho()
 
 void nivel_1::verificarCollicion()
 {
-    // ----- MOSTRAR INSTRUCCIONES -----
-    if (mostrarInstruccionesInicio) {
-        if (textoInstrucciones == nullptr) {
-            textoInstrucciones = new QGraphicsTextItem(
-                "Usa A / D para moverte\n"
-                "Presiona R en la esquina para recargar\n"
-                "Presiona E junto al tubo para enfriarlo"
-                );
-            textoInstrucciones->setDefaultTextColor(Qt::white);
-            textoInstrucciones->setPos(200, 80);
-            textoInstrucciones->setZValue(1000);
-            escena->addItem(textoInstrucciones);
-        }
+    // Evita que el nivel siga ejecutando lógica después de ganar/perder
+    if (juegoTerminado) return;
 
-        framesInstrucciones++;
-
-        if (framesInstrucciones > 360) {
-            escena->removeItem(textoInstrucciones);
-            delete textoInstrucciones;
-            textoInstrucciones = nullptr;
-            mostrarInstruccionesInicio = false;
-        }
-    }
     // ----- VICTORIA -----
     if (tuboCaliente && tuboCaliente->getTemperatura() <= 50 && !victoriaMostrada) {
         victoriaMostrada = true;
+        juegoTerminado = true;     // detener más lógica
+
+        detenerNivel();            // detiene timers y actualizaciones
 
         QMessageBox::information(nullptr, "¡Victoria!", "¡Nivel 1 completado!");
-
         emit nivelCompletado();
         return;
     }
 
-    // ----- DETECCIÓN DE COLISIÓN CON TUBO CALIENTE -----
+    // ----- DETECCIÓN DE COLISIÓN (solo aviso) -----
     if (jugador) {
-        for (QGraphicsItem* item : jugador->collidingItems()) {
+        for (QGraphicsItem *item : jugador->collidingItems()) {
             if (dynamic_cast<Tubo_caliente*>(item)) {
                 qDebug() << "Colisión con tubo caliente!";
-                // Aquí enfriaremos después
             }
         }
     }
 
     // ----- SOBRECALENTAMIENTO DEL TUBO -----
     if (tuboCaliente && tuboCaliente->getTemperatura() >= 100) {
+
         qDebug() << "Tubo llegó a 100°C! Perdiendo una vida...";
 
-        // Restar vida
-        this->juego->restarVida();
-        actualizarVidas(this->juego->getVidas());
+        juego->restarVida();
+        actualizarVidas(juego->getVidas());
 
-        if (!this->juego->haPerdido()) {
-            // Reiniciar temperatura a un valor seguro
+        if (!juego->haPerdido()) {
             tuboCaliente->reiniciarTemperatura(80);
-            qDebug() << "Tubo reiniciado. Vidas restantes:" << this->juego->getVidas();
-        } else {
-            QMessageBox msg(QMessageBox::Critical,
-                            "Game Over",
-                            "¡Has perdido todas tus vidas!\nInténtalo de nuevo.",
-                            QMessageBox::Ok);
-
-            msg.exec();   // ✔ muestra y espera que cierren
-
-            emit gameOver(); // ✔ vuelve al menú
-            qDebug() << "Juego terminado! No se reinicia el tubo.";
+            return;
         }
+
+        // ----- GAME OVER -----
+        juegoTerminado = true;
+        detenerNivel();     // <- clave para evitar repeticiones
+
+        QMessageBox msg(QMessageBox::Critical,
+                        "Game Over",
+                        "¡Has perdido todas tus vidas!\nInténtalo de nuevo.",
+                        QMessageBox::Ok);
+        msg.exec();
+
+        emit gameOver();
+        return;
     }
 }
+
 
 void nivel_1::cargarJugador(Juego *j)
 {
@@ -188,5 +172,14 @@ void nivel_1::enfriarTubo()
 
     // 5. Retroceso forzado del jugador
     jugador->setX(jugador->x() - 40);
+}
+
+void nivel_1::detenerNivel()
+{
+    for (QObject *obj : escena->children()) {
+        if (QTimer *t = qobject_cast<QTimer*>(obj)) {
+            t->stop();
+        }
+    }
 }
 
