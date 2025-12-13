@@ -4,8 +4,11 @@
 #include "escenario_juego.h"
 #include "jugador.h"
 #include "juego.h"
-class nivel_3
+#include <QObject>
+class nivel_3 : public QObject
 {
+    Q_OBJECT
+
 private:
 
     QGraphicsScene *escena;
@@ -53,13 +56,17 @@ private:
     int tableroPixAlto  = 0;
 
     QVector<QGraphicsRectItem*> minasVisuales;
+    QTimer *timerAgente = nullptr;
+    bool agenteActivo = false;
+    bool direccionDerecha = true;
 
 
 public:
-    nivel_3(QGraphicsScene *escena);
+    explicit nivel_3(QGraphicsScene *escena, QObject *parent = nullptr);
+
     void inicializar();
     void cargarEscenario();
-    void cargarFondo();
+
     void cargarvida();
     void cargarJugador(Juego *juego);
    void moverJugador(int df, int dc);
@@ -67,6 +74,11 @@ public:
    void dibujarMinas();
     void dibujarGrilla();
    void dibujarTablero();
+   bool quedanMinas();
+   int getColJugador() const { return colJugador; }
+   int getFilaJugador() const { return filaJugador; }
+   int getColumnas() const { return columnas; }
+
 };
 
 #endif // NIVEL_3_H

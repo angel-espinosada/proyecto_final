@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    agente_automata.cpp \
     enemigo.cpp \
     escenario_juego.cpp \
     imagenes/imagenes.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
     tubo_frio.cpp
 
 HEADERS += \
+    agente_automata.h \
     enemigo.h \
     escenario_juego.h \
     juego.h \

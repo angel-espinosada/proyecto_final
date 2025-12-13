@@ -136,6 +136,16 @@ QPainterPath Jugador::shape() const
 
 void Jugador::keyPressEvent(QKeyEvent *event)
 {
+
+    if (modoTopDown && nivel3Activo) {
+        if (event->key() == Qt::Key_W) emit pedirMoverArriba();
+        if (event->key() == Qt::Key_S) emit pedirMoverAbajo();
+        if (event->key() == Qt::Key_A) emit pedirMoverIzquierda();
+        if (event->key() == Qt::Key_D) emit pedirMoverDerecha();
+        return;
+    }
+
+
     // (Nivel 2)
     if (modoTopDown)
     {

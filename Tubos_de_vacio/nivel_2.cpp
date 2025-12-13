@@ -14,14 +14,14 @@
 
 void nivel_2::detenerNivel()
 {
-    // Detener todos los timers creados dentro del nivel
+    // detiene todos los timers del nivel
     for (QObject *obj : this->children()) {
         if (QTimer *t = qobject_cast<QTimer*>(obj)) {
             t->stop();
         }
     }
 
-    // Detener timers asociados a la escena también
+    // detiene timers de la escena también
     for (QObject *obj : escena->children()) {
         if (QTimer *t = qobject_cast<QTimer*>(obj)) {
             t->stop();
@@ -50,14 +50,14 @@ void nivel_2::cargarEscenario()
 void nivel_2::cargarFondo()
 {
     qDebug() << "  cargarFondo - IN";
-    // usa el mismo formato del nivel 1
+    // carga la imagen de fondo del nivel 2
     QGraphicsPixmapItem *fondo = escenario->crearFondo(
         ":/imagenes/fondo_nivel2.PNG",
         0, 0, 800, 600
         );
     fondo->setZValue(-10);
     escena->addItem(fondo);
-     qDebug() << " cargarFondo - finnnn";
+    qDebug() << " cargarFondo - finnnn";
 }
 
 
@@ -66,18 +66,19 @@ void nivel_2::cargarTubos()
 {
 
     tubos.clear();
-if (juegoTerminado) return;
-    // Tubo inferior (más lento)
+    if (juegoTerminado) return;
+    // crea tres tubos calientes en diferentes posiciones con diferentes temperaturas iniciales
+    // tubo inferior (más lento)
     TuboInfo t1;
     t1.caliente = new Tubo_caliente(700, 400, 50, 150);
     t1.frio = new Tubo_Frio(700, 400, 50, 150);
     t1.frio->setVisible(false);
-    t1.temperatura = 80; // Más bajo
+    t1.temperatura = 80;
     escena->addItem(t1.caliente);
     escena->addItem(t1.frio);
     tubos.append(t1);
 
-    // Tubo superior izquierda (rápido)
+    // tubo superior izquierda (rápido)
     TuboInfo t2;
     t2.caliente = new Tubo_caliente(50, 50, 50, 150);
     t2.frio = new Tubo_Frio(50, 50, 50, 150);
@@ -87,7 +88,7 @@ if (juegoTerminado) return;
     escena->addItem(t2.frio);
     tubos.append(t2);
 
-    // Tubo superior derecha (intermedio)
+    // tubo superior derecha (intermedio)
     TuboInfo t3;
     t3.caliente = new Tubo_caliente(750, 70, 50, 150);
     t3.frio = new Tubo_Frio(750, 70, 50, 150);
@@ -97,28 +98,28 @@ if (juegoTerminado) return;
     escena->addItem(t3.frio);
     tubos.append(t3);
 
-    // Timer único
+    // timer que aumenta la temperatura cada segundo
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
         for (TuboInfo &t : tubos) {
             if (t.temperatura < 100) {
                 t.temperatura++;
             }
-            // Verificar explosión INMEDIATA
+            // si el tubo llega a 100°c explota y se pierde una vida
             if (t.temperatura >= 100 && !t.cambiado) {
                 qDebug() << "¡Tubo explotó! Perdiendo vida...";
                 juego->restarVida();
                 actualizarVidas(juego->getVidas());
 
                 if (juego->haPerdido()) {
-                    detenerNivel();  // ⛔ Detiene toda la lógica del nivel
+                    detenerNivel();
 
                     QMessageBox::critical(nullptr, "Game Over", "¡Perdiste!");
 
-                    emit gameOver(); // ← permite a MainWindow volver al menú
+                    emit gameOver();
                     return;
                 } else {
-                    // Reiniciar
+                    // reinicia el tubo después de explotar
                     t.temperatura = 80;
                     t.cambiado = false;
                     t.caliente->setVisible(true);
@@ -135,6 +136,7 @@ if (juegoTerminado) return;
 
 void nivel_2::cargarObstaculos()
 {
+    // crea obstáculos (cajas) que bloquean el camino del jugador
     QGraphicsRectItem* caja1 = escenario->crearObstaculo(300, 300, 30, 250);
     QGraphicsRectItem* caja2 = escenario->crearObstaculo(500, 200, 40, 350, Qt::darkRed);
     QGraphicsRectItem* caja3 = escenario->crearObstaculo(50, 180, 250, 30);
@@ -147,7 +149,7 @@ void nivel_2::cargarJugador(Juego *j)
 {
 
 
-    //Fisica
+    // timer para física del jugador (gravedad y movimiento)
     QTimer *timerFisica = new QTimer(this);
     connect(timerFisica, &QTimer::timeout, this, &nivel_2::actualizarFisica);
     timerFisica->start(16);
@@ -157,9 +159,9 @@ void nivel_2::cargarJugador(Juego *j)
 
     jugador = new Jugador();
 
-    jugador->setModoTopDown(true);  //  Vista cenital
+    jugador->setModoTopDown(true);  // vista cenital
 
-    jugador->setPos(200, 400);      // Un punto visible
+    jugador->setPos(200, 400);
     escena->addItem(jugador);
 
     connect(jugador, &Jugador::pedirSalto, this, &nivel_2::saltar);
@@ -181,7 +183,7 @@ void nivel_2::verificarCollicion()
         }
     }
 
-    // Verificar victoria: ¿todos los tubos son fríos?
+    // verifica si todos los tubos fueron enfriados (victoria)
     bool todosCompletados = true;
     for (const TuboInfo &t : tubos) {
         if (!t.cambiado) {
@@ -198,7 +200,7 @@ void nivel_2::actualizar()
 {
     tiempoRestante--;
     verificarCambioTubos();
-    // Por ahora solo lo vemos en consola:
+    // muestra el tiempo en consola
     qDebug() << "Tiempo restante:" << tiempoRestante;
 }
 
@@ -210,11 +212,11 @@ void nivel_2::verificarCambioTubos()
         if (t.cambiado) continue;
 
         if (jugador->collidesWithItem(t.caliente)) {
-            // Enfriar el tubo (ajusta la cantidad según quieras)
+            // enfría el tubo 10 grados al tocarlo
             t.temperatura = qMax(0, t.temperatura - 10);
             qDebug() << "❄️ Enfriado. Nueva temp:" << t.temperatura;
 
-            // Verificar victoria (temp ≤ 0)
+            // si llega a 0°c se completa
             if (t.temperatura <= 0) {
                 t.caliente->setVisible(false);
                 t.frio->setVisible(true);
@@ -226,7 +228,7 @@ void nivel_2::verificarCambioTubos()
 }
 void nivel_2::tuboExplotado(TuboInfo &tubo)
 {
-    if (tubo.cambiado) return; // Ya fue resuelto
+    if (tubo.cambiado) return; // ya fue resuelto
 
     qDebug() << "¡Tubo explotó! Perdiendo una vida...";
     juego->restarVida();
@@ -237,7 +239,7 @@ void nivel_2::tuboExplotado(TuboInfo &tubo)
         return;
     }
 
-    // Reiniciar el tubo
+    // reinicia el tubo
     tubo.temperatura = 50;
     tubo.cambiado = false;
     tubo.frio->setVisible(false);
@@ -252,11 +254,13 @@ void nivel_2::setJuego(Juego *j)
 
 void nivel_2::cargarvida()
 {
+    // muestra las 3 vidas iniciales
     escenario->cargarVidas(escena, 3);
 }
 
 void nivel_2::actualizarVidas(int vidas)
 {
+    // actualiza el contador visual de vidas
     escenario->actualizarVidas(escena, vidas);
 }
 
@@ -269,115 +273,112 @@ bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
 
     QVector<QGraphicsItem*> colisiones = jugador->collidingItems();
 
+    // detecta qué tubo caliente está tocando el jugador
     for (int i = 0; i < tubos.size(); i++)
     {
         if (colisiones.contains(tubos[i].caliente))
         {
-            indiceTubo = i;      // ← devolvemos qué tubo tocó
+            indiceTubo = i;
             return true;
         }
     }
 
     return false;
 }
-    QPointF ultimaPosicionJugador;
+QPointF ultimaPosicionJugador;
 
-    void nivel_2::actualizarFisica()
-    {
-        if (!jugador) return;
-        // Guardar última posición segura antes del movimiento
-        ultimaPosicionJugador = jugador->pos();
-        // =======================
-        // FÍSICA SOLO SI ESTÁ ACTIVA
-        // =======================
-        if (jugador->activarFisica) {
+void nivel_2::actualizarFisica()
+{
+    if (!jugador) return;
+    // guarda la última posición antes de mover (para revertir si choca)
+    ultimaPosicionJugador = jugador->pos();
 
-            // PASO INICIAL DEL SALTO
-            if (jugador->pasoInicialSalto) {
-                jugador->setY(jugador->y() - 25);
-                jugador->setX(jugador->x() + 8);
-                jugador->pasoInicialSalto = false;
-            }
+    // aplica física solo cuando el jugador está saltando
+    if (jugador->activarFisica) {
 
-            // APLICAR GRAVEDAD
-            jugador->velocidadY += jugador->gravedad;
-
-            // MOVER EN Y
-            jugador->setY(jugador->y() + jugador->velocidadY);
-
-            // AVANZAR EN X DURANTE EL SALTO
-            if (jugador->saltando) {
-                jugador->setX(jugador->x() + 4);
-            }
-
-            // DETECCIÓN DE PISO
-            float piso = 400;
-
-            if (jugador->y() >= piso) {
-                jugador->setY(piso);
-                jugador->velocidadY = 0;
-
-                jugador->enElSuelo = true;
-                jugador->saltando = false;
-
-                jugador->activarFisica = false;  // ← Termina el salto
-            }
+        // paso inicial del salto (impulso extra)
+        if (jugador->pasoInicialSalto) {
+            jugador->setY(jugador->y() - 25);
+            jugador->setX(jugador->x() + 8);
+            jugador->pasoInicialSalto = false;
         }
 
-        // ================================
-        //  🔥 LÍMITES HORIZONTALES
-        // ================================
-        int anchoJugador = jugador->boundingRect().width();
+        // aplica gravedad
+        jugador->velocidadY += jugador->gravedad;
 
-        // Evitar salir por la izquierda
-        if (jugador->x() < 0)
-            jugador->setX(0);
+        // mueve verticalmente
+        jugador->setY(jugador->y() + jugador->velocidadY);
 
-        // Evitar salir por la derecha
-        if (jugador->x() > escena->width() - anchoJugador)
-            jugador->setX(escena->width() - anchoJugador);
-
-
-
-        // ================================
-        //   DETECCIÓN DE COLISIONES
-        // ================================
-        QVector<QGraphicsItem*> colisiones = jugador->collidingItems();
-
-        for (QGraphicsItem* item : colisiones) {
-
-            if (dynamic_cast<QGraphicsRectItem*>(item)) {
-                jugador->setPos(ultimaPosicionJugador);
-                qDebug() << "Jugador tocó un OBSTÁCULO";
-            }
-
-            if (dynamic_cast<QGraphicsRectItem*>(item)) {
-                jugador->setPos(ultimaPosicionJugador);
-                jugador->velocidadY = 0;      // detiene avance vertical
-                jugador->saltando = false;    // evita seguir avanzando en X por salto
-                jugador->activarFisica = false; // detiene la física ese frame
-
-                qDebug() << "Jugador BLOQUEADO por un OBSTÁCULO";
-
-                return;
-            }
+        // avanza horizontalmente durante el salto
+        if (jugador->saltando) {
+            jugador->setX(jugador->x() + 4);
         }
 
-        intentarRecogerTuboFrio();
-        intentarColocarTuboFrio();
+        // detecta si tocó el piso
+        float piso = 400;
+
+        if (jugador->y() >= piso) {
+            jugador->setY(piso);
+            jugador->velocidadY = 0;
+
+            jugador->enElSuelo = true;
+            jugador->saltando = false;
+
+            jugador->activarFisica = false;  // termina el salto
+        }
     }
+
+    // evita que el jugador salga de los límites de la pantalla
+    int anchoJugador = jugador->boundingRect().width();
+
+    // límite izquierdo
+    if (jugador->x() < 0)
+        jugador->setX(0);
+
+    // límite derecho
+    if (jugador->x() > escena->width() - anchoJugador)
+        jugador->setX(escena->width() - anchoJugador);
+
+
+
+    // detecta colisiones con obstáculos
+    QVector<QGraphicsItem*> colisiones = jugador->collidingItems();
+
+    for (QGraphicsItem* item : colisiones) {
+
+        if (dynamic_cast<QGraphicsRectItem*>(item)) {
+            jugador->setPos(ultimaPosicionJugador);
+            qDebug() << "Jugador tocó un OBSTÁCULO";
+        }
+
+        if (dynamic_cast<QGraphicsRectItem*>(item)) {
+            // revierte la posición al chocar
+            jugador->setPos(ultimaPosicionJugador);
+            jugador->velocidadY = 0;
+            jugador->saltando = false;
+            jugador->activarFisica = false;
+
+            qDebug() << "Jugador BLOQUEADO por un OBSTÁCULO";
+
+            return;
+        }
+    }
+
+    intentarRecogerTuboFrio();
+    intentarColocarTuboFrio();
+}
 
 void nivel_2::saltar()
 {
     if (!jugador) return;
-    if (jugador->saltando) return;  // no doble salto
+    if (jugador->saltando) return;  // evita doble salto
 
     jugador->saltando = true;
     jugador->enElSuelo = false;
 
     jugador->velocidadY = jugador->impulsoSalto; // impulso hacia arriba
 
-    jugador->activarFisica = true;  // activar física durante el salto
+    jugador->activarFisica = true;  // activa la física durante el salto
 }
 
 void nivel_2::cargarInventarioFrio()
@@ -387,11 +388,12 @@ void nivel_2::cargarInventarioFrio()
     int baseX = 50;
     int baseY = 450;
 
+    // crea 3 tubos fríos en el inventario para recoger
     for (int i = 0; i < 3; i++) {
 
         Tubo_Frio *frio = new Tubo_Frio(baseX + (i * 70), baseY, 50, 150);
 
-        frio->setZValue(5);  // que quede bien visible
+        frio->setZValue(5);
         frio->setVisible(true);
 
         escena->addItem(frio);
@@ -404,7 +406,8 @@ void nivel_2::cargarInventarioFrio()
 
 void nivel_2::intentarRecogerTuboFrio()
 {
-    if (!jugador || jugador->estaLlevandoTuboFrio())  // ← usa getter
+    // verifica si el jugador puede recoger un tubo frío del inventario
+    if (!jugador || jugador->estaLlevandoTuboFrio())
         return;
 
     for (int i = 0; i < inventarioFrio.size(); i++)
@@ -415,14 +418,14 @@ void nivel_2::intentarRecogerTuboFrio()
         {
             qDebug() << "Jugador recogió un tubo frío del inventario.";
 
-            // Ocultar de la escena
+            // oculta el tubo del inventario
             frio->setVisible(false);
 
-            // Asignarlo al jugador
+            // lo asigna al jugador
             jugador->setLlevandoTuboFrio(true);
             jugador->setTuboEnEspalda(frio);
 
-            // Hacerlo hijo visual del jugador
+            // lo hace seguir al jugador visualmente
             frio->setParentItem(jugador);
             frio->setPos(-10, -40); // atrás del jugador
 
@@ -436,6 +439,7 @@ void nivel_2::intentarRecogerTuboFrio()
 
 void nivel_2::intentarColocarTuboFrio()
 {
+    // intenta colocar el tubo frío que lleva en un tubo caliente
     if (!jugador || !jugador->estaLlevandoTuboFrio())
         return;
 
@@ -450,6 +454,7 @@ void nivel_2::intentarColocarTuboFrio()
             Tubo_Frio* frio = jugador->getTuboEnEspalda();
             if (!frio) return;
 
+            // reemplaza el tubo caliente por el frío
             t.caliente->setVisible(false);
 
             frio->setParentItem(nullptr);
@@ -471,6 +476,7 @@ void nivel_2::intentarColocarTuboFrio()
 
     if (!colocoTubo) return;
 
+    // verifica si todos los tubos fueron enfriados (victoria)
     bool todos = true;
     for (const TuboInfo &x : tubos) {
         if (!x.cambiado) {

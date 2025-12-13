@@ -22,7 +22,7 @@ class Jugador: public QObject, public QGraphicsItem
      bool modoTopDown = false;
    bool llevandoTuboFrio = false;
    Tubo_Frio* tuboEnEspalda = nullptr;
-
+ bool nivel3Activo = false;
 
 
 public:
@@ -53,9 +53,16 @@ public:
 
      Tubo_Frio* getTuboEnEspalda() const { return tuboEnEspalda; }
      void setTuboEnEspalda(Tubo_Frio* t) { tuboEnEspalda = t; }
+     void setNivel3Activo(bool v) { nivel3Activo = v; }
+     bool isNivel3Activo() const { return nivel3Activo; }
 
  signals:
      void pedirSalto();
+ signals:
+     void pedirMoverArriba();
+     void pedirMoverAbajo();
+     void pedirMoverIzquierda();
+     void pedirMoverDerecha();
 };
 
 #endif // JUGADOR_H
