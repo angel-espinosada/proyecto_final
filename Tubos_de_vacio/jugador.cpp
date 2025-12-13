@@ -9,30 +9,22 @@
 
 void Jugador::moverIzquierda()
 {
-    QPointF destino(x() - velocidad, y());
-    if (puedeMoverA(destino))
-        setPos(destino);
+    setX(x() - velocidad);
 }
 
 void Jugador::moverDerecha()
 {
-    QPointF destino(x() + velocidad, y());
-    if (puedeMoverA(destino))
-        setPos(destino);
+    setX(x() + velocidad);
 }
 
 void Jugador::moverArriba()
 {
-    QPointF destino(x(), y() - velocidad);
-    if (puedeMoverA(destino))
-        setPos(destino);
+    setY(y() - velocidad);
 }
 
 void Jugador::moverAbajo()
 {
-    QPointF destino(x(), y() + velocidad);
-    if (puedeMoverA(destino))
-        setPos(destino);
+    setY(y() + velocidad);
 }
 
 
@@ -187,23 +179,3 @@ void Jugador::keyPressEvent(QKeyEvent *event)
     }
 }
 
-bool Jugador::puedeMoverA(QPointF destino)
-{
-    // Guardar posición actual
-            QPointF posOriginal = pos();
-
-    // Mover temporalmente
-    setPos(destino);
-
-    // Detectar colisión con obstáculos sólidos
-    for (QGraphicsItem* item : collidingItems()) {
-        if (dynamic_cast<QGraphicsRectItem*>(item)) {
-            setPos(posOriginal);  // volver
-            return false;         // NO se puede mover
-        }
-    }
-
-    // No hubo colisión → sí se puede
-    setPos(posOriginal);
-    return true;
-}

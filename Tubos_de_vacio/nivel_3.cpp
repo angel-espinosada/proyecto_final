@@ -3,7 +3,7 @@
 
 nivel_3::nivel_3(QGraphicsScene *esc)
 {
-    escena = esc;
+   this->escena = escena;
 }
 void nivel_3::inicializar()
 {

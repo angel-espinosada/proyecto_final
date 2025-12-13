@@ -72,7 +72,7 @@ if (juegoTerminado) return;
     t1.caliente = new Tubo_caliente(700, 400, 50, 150);
     t1.frio = new Tubo_Frio(700, 400, 50, 150);
     t1.frio->setVisible(false);
-    t1.temperatura = 70; // Más bajo
+    t1.temperatura = 80; // Más bajo
     escena->addItem(t1.caliente);
     escena->addItem(t1.frio);
     tubos.append(t1);
@@ -82,7 +82,7 @@ if (juegoTerminado) return;
     t2.caliente = new Tubo_caliente(50, 50, 50, 150);
     t2.frio = new Tubo_Frio(50, 50, 50, 150);
     t2.frio->setVisible(false);
-    t2.temperatura = 80;
+    t2.temperatura = 60;
     escena->addItem(t2.caliente);
     escena->addItem(t2.frio);
     tubos.append(t2);
@@ -92,7 +92,7 @@ if (juegoTerminado) return;
     t3.caliente = new Tubo_caliente(750, 70, 50, 150);
     t3.frio = new Tubo_Frio(750, 70, 50, 150);
     t3.frio->setVisible(false);
-    t3.temperatura = 75;
+    t3.temperatura = 50;
     escena->addItem(t3.caliente);
     escena->addItem(t3.frio);
     tubos.append(t3);
@@ -359,7 +359,7 @@ bool nivel_2::jugadorTocaTuboCaliente(int &indiceTubo)
 
                 qDebug() << "Jugador BLOQUEADO por un OBSTÁCULO";
 
-                return;   // ⛔ DETIENE TODA LA FUNCIÓN (la clave)
+                return;
             }
         }
 
@@ -439,39 +439,49 @@ void nivel_2::intentarColocarTuboFrio()
     if (!jugador || !jugador->estaLlevandoTuboFrio())
         return;
 
+    bool colocoTubo = false;
+
     for (TuboInfo &t : tubos)
     {
         if (!t.cambiado && jugador->collidesWithItem(t.caliente))
         {
-            qDebug() << "El jugador coloca el tubo frío en el tubo caliente.";
+            qDebug() << "el jugador coloca el tubo frío en el tubo caliente";
 
-            // Obtener el tubo frío que lleva el jugador
             Tubo_Frio* frio = jugador->getTuboEnEspalda();
             if (!frio) return;
 
-            // Quitar tubo caliente
             t.caliente->setVisible(false);
 
-            // Sacar el frío de la espalda
             frio->setParentItem(nullptr);
-
-            // Usar posición real del tubo caliente
             QPointF posCaliente = t.caliente->pos();
-            frio->setPos(posCaliente.x(), posCaliente.y());
+            frio->setPos(posCaliente);
             frio->setVisible(true);
 
-            // Marcar como resuelto
             t.cambiado = true;
             t.frio = frio;
-
-            // Detener calentamiento de este tubo
             t.temperatura = 0;
 
-            // Liberar al jugador
             jugador->setLlevandoTuboFrio(false);
             jugador->setTuboEnEspalda(nullptr);
 
+            colocoTubo = true;
             break;
         }
+    }
+
+    if (!colocoTubo) return;
+
+    bool todos = true;
+    for (const TuboInfo &x : tubos) {
+        if (!x.cambiado) {
+            todos = false;
+            break;
+        }
+    }
+
+    if (todos) {
+        detenerNivel();
+        QMessageBox::information(nullptr, "victoria", "todos los tubos están fríos");
+        emit nivelCompletado();
     }
 }

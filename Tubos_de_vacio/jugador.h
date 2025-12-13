@@ -53,7 +53,7 @@ public:
 
      Tubo_Frio* getTuboEnEspalda() const { return tuboEnEspalda; }
      void setTuboEnEspalda(Tubo_Frio* t) { tuboEnEspalda = t; }
-     bool puedeMoverA(QPointF destino);
+
  signals:
      void pedirSalto();
 };
