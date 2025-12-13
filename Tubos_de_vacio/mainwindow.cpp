@@ -87,6 +87,10 @@ MainWindow::MainWindow(QWidget *parent)
         else if (nivel == 3) {
             nivel_3 *n3 = new nivel_3(escena);
             n3->inicializar();
+            n3->cargarEscenario();
+            n3->cargarFondo();
+            n3->cargarvida();
+            n3->cargarJugador(juego);
         }
     });
 }

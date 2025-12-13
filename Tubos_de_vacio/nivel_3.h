@@ -34,11 +34,26 @@ private:
     //Fisica
     float velocidadX = 0;
     float velocidadXSalto = 0.0f;
-    bool estaSaltando = false;
-    bool enSalto = false;
+
     bool juegoTerminado = false;
     void detenerNivel();
-public:
+
+    static const int filas = 8;
+    static const int columnas = 8;
+
+    int tablero[filas][columnas];
+    int filaJugador = 0;
+    int colJugador = 0;
+    int tamCelda = 60;
+    int offsetX = 80;   // ajustar según imagen
+    int offsetY = 60;   // ajustar según imagen
+
+    int margenCelda = 6;
+    int tableroPixAncho = 0;
+    int tableroPixAlto  = 0;
+
+    QVector<QGraphicsRectItem*> minasVisuales;
+
 
 public:
     nivel_3(QGraphicsScene *escena);
@@ -47,6 +62,11 @@ public:
     void cargarFondo();
     void cargarvida();
     void cargarJugador(Juego *juego);
+   void moverJugador(int df, int dc);
+    void actualizarVidas(int vidas);
+   void dibujarMinas();
+    void dibujarGrilla();
+   void dibujarTablero();
 };
 
 #endif // NIVEL_3_H

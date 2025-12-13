@@ -6,5 +6,6 @@
         <file>imagenes/vida_perdida.png</file>
         <file>imagenes/fondo_nivel1.png</file>
         <file>imagenes/fondo_nivel2.PNG</file>
+        <file>imagenes/tablero.png</file>
     </qresource>
 </RCC>
